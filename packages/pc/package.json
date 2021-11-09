@@ -1,5 +1,5 @@
 {
-  "name": "@antv/g6-pc",
+  "name": "@sirensolutions/g6-pc",
   "version": "0.4.0-beta.0",
   "description": "A Graph Visualization Framework in JavaScript",
   "keywords": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/antvis/g6"
+    "url": "https://github.com/sirensolutions/g6"
   },
   "license": "MIT",
   "author": "https://github.com/orgs/antvis/people",
@@ -74,9 +74,9 @@
     "@antv/g-canvas": "^0.5.2",
     "@antv/g-math": "^0.1.1",
     "@antv/g-svg": "^0.5.1",
-    "@antv/g6-core": "0.4.0-beta.0",
-    "@antv/g6-plugin": "0.4.0-beta.0",
-    "@antv/g6-element": "0.4.0-beta.0",
+    "@sirensolutions/g6-core": "0.4.0-beta.0",
+    "@sirensolutions/g6-plugin": "0.4.0-beta.0",
+    "@sirensolutions/g6-element": "0.4.0-beta.0",
     "@antv/algorithm": "^0.1.8",
     "@antv/hierarchy": "^0.6.7",
     "@antv/layout": "0.1.19-beta.5",

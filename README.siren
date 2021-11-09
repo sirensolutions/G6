@@ -1,0 +1,25 @@
+# Siren local build notes
+
+## Local builds
+
+- Remove the root node_modules directory
+- Run `yarn`
+- Run `yarn boostrap`
+- Run `yarn build:all`
+
+## Creating a new release
+
+- Bump versions with `yarn lerna version prerelease --preid="siren" --ignore-changes --no-push --no-git-tag-version`
+- Create a branch for the release bump named after the new g6 package version, e.g. `rel-0.4.0-siren.0`
+- Commit the changes and open a pull request
+- Test the temporary packages built by the pull request
+- If the packages are fine, merge the pull request and create a tag for the release, e.g. `tag-0.4.0-siren.0`
+- Push the tag and the packages should be built automatically
+
+## Registry access
+
+To login to the registry from your machine, execute the following and use a personal access token with at least permission to read packages as the password.
+
+npm login --scope=@sirensolutions --registry=https://npm.pkg.github.com
+
+If you need to write and/or delete packages, create a new personal token with permission to write packages and login again.

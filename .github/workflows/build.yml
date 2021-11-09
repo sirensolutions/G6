@@ -1,0 +1,41 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "tag-*"
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+        registry-url: 'https://npm.pkg.github.com'
+        scope: '@sirensolutions'
+    - run: yarn
+    - run: yarn bootstrap
+    - name: Create version from PR run
+      run: yarn lerna version prerelease -y --preid=siren-pr-$GITHUB_RUN_ID --ignore-changes --no-push --no-git-tag-version
+      if: "!startsWith(github.ref, 'refs/tags/')"
+    - run: yarn build:all
+    - run: cd packages/core && yarn publish && cd ..
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: cd packages/element && yarn publish && cd ..
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: cd packages/g6 && yarn publish && cd ..
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: cd packages/pc && yarn publish && cd ..
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - run: cd packages/plugin && yarn publish && cd ..
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
