@@ -1,15 +1,24 @@
 {
-  "version": "*",
+  "version": "independent",
   "npmClient": "yarn",
-  "packages": ["packages/*"],
+  "packages": [
+    "packages/*"
+  ],
   "useWorkspaces": true,
   "command": {
     "version": {
-      "ignoreChanges": ["*.md", "**/*.test.ts", "**/*.spec.ts"],
+      "ignoreChanges": [
+        "*.md",
+        "**/*.test.ts",
+        "**/*.spec.ts"
+      ],
       "message": "chore(release): publish"
     },
     "bootstrap": {
-      "npmClientArgs": ["--no-package-lock", "--no-ci"]
+      "npmClientArgs": [
+        "--no-package-lock",
+        "--no-ci"
+      ]
     }
   },
   "changelog": {
