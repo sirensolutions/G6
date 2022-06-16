@@ -1,5 +1,4 @@
 import { NodeConfig, ICombo, ComboConfig, INode } from "@antv/g6-core";
-import { concat } from 'lodash';
 
 interface NestedChildren {
     nodes: NodeConfig[],
@@ -43,8 +42,8 @@ export const returnNestedChildrenModels = (combos: ICombo[], nestedChildren?: Ne
             .reduce((prev, next) => {
                 // combine nodes/combos of adjacent child combos
                 return {
-                    nodes: Array.from(new Set(concat(prev.nodes, next.nodes))),
-                    combos: Array.from(new Set(concat(prev.combos, next.combos)))
+                    nodes: Array.from(new Set([...prev.nodes, ...next.nodes])),
+                    combos: Array.from(new Set([...prev.combos, ...next.combos]))
                 }
             })
     }

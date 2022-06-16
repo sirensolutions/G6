@@ -1,6 +1,5 @@
 import G6, { ICombo } from '../../../src';
 import { returnNestedChildrenModels } from '../../../src/util/combo-util';
-import 'jest-canvas-mock'
 
 const div = document.createElement('div');
 div.id = 'container';
