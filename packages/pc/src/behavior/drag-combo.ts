@@ -131,6 +131,9 @@ export default {
     // 获取所有选中的 Combo
     const combos = graph.findAllByState('combo', this.selectedState);
 
+    // exit if no combos selected
+    if (!combos.length) return;
+
     const currentCombo = item.get('id');
 
     const dragCombos = combos.filter((combo) => {
