@@ -215,7 +215,7 @@ export default {
         }
         // 将 Combo 放置到某个 Combo 上面时，只有当 onlyChangeComboSize 为 false 时候才更新 Combo 结构
         if (!this.onlyChangeComboSize) {
-          graph.updateComboTree(combo, targetModel.id);
+          graph.updateComboTree(combo, targetModel.id, false);
         } else {
           graph.updateCombo(combo);
         }
@@ -252,7 +252,7 @@ export default {
         if (!this.onlyChangeComboSize) {
           if (comboId !== combo.getID()) {
             droppedCombo = graph.findById(comboId);
-            if (comboId !== combo.getModel().parentId) graph.updateComboTree(combo, comboId);
+            if (comboId !== combo.getModel().parentId) graph.updateComboTree(combo, comboId, false);
           }
         } else {
           graph.updateCombo(combo);
@@ -264,7 +264,7 @@ export default {
         if (!this.onlyChangeComboSize) {
           const model = combo.getModel();
           if (model.comboId) {
-            graph.updateComboTree(combo);
+            graph.updateComboTree(combo, null, false);
           }
         } else {
           graph.updateCombo(combo);
@@ -335,7 +335,7 @@ export default {
       this.targets.map((combo: ICombo) => {
         // 将 Combo 放置到某个 Combo 上面时，只有当 onlyChangeComboSize 为 false 时候才更新 Combo 结构
         if (!this.onlyChangeComboSize) {
-          graph.updateComboTree(combo);
+          graph.updateComboTree(combo, null, false);
         } else {
           graph.updateCombo(combo);
         }
@@ -407,8 +407,7 @@ export default {
       y += origin.y - evt.y;
     }
 
-    graph.updateItem(item, { x, y });
-
+    graph.updateItem(item, { x, y }, false);
     graph.refreshPositions();
   },
 
