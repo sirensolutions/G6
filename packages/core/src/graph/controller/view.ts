@@ -62,7 +62,7 @@ export default class ViewController {
       y: bbox.y + bbox.height / 2,
     };
 
-    function doZoom() {
+    function doZoom(viewCenter, animate, animateCfg) {
       const w = (width - padding[1] - padding[3]) / bbox.width;
       const h = (height - padding[0] - padding[2]) / bbox.height;
       let ratio = w;
@@ -78,12 +78,14 @@ export default class ViewController {
     if (animate) {
       const animateConfig = getAnimateCfgWithCallback({
         animateCfg,
-        callback: () => { doZoom(); }
+        callback: () => {
+          doZoom(viewCenter, animate, animateCfg);
+        }
       });
       graph.translate(viewCenter.x - groupCenter.x, viewCenter.y - groupCenter.y, animate, animateConfig);
     } else {
       graph.translate(viewCenter.x - groupCenter.x, viewCenter.y - groupCenter.y);
-      doZoom();
+      doZoom(viewCenter, animate, animateCfg);
     }
   }
 
@@ -110,7 +112,7 @@ export default class ViewController {
       y: bbox.y + bbox.height / 2,
     };
 
-    function doZoom() {
+    function doZoom(bbox, padding, onlyOutOfViewPort, graph, animate, animateCfg) {
       const wRatio = (width - padding[1] - padding[3]) / bbox.width;
       const hRatio = (height - padding[0] - padding[2]) / bbox.height;
       let ratio;
@@ -141,12 +143,12 @@ export default class ViewController {
     if (animate) {
       const animateConfig = getAnimateCfgWithCallback({
         animateCfg,
-        callback: () => { doZoom(); }
+        callback: () => { doZoom(bbox, padding, onlyOutOfViewPort, graph, animate, animateCfg); }
       });
       graph.translate(viewCenter.x - groupCenter.x, viewCenter.y - groupCenter.y, animate, animateConfig);
     } else {
       graph.translate(viewCenter.x - groupCenter.x, viewCenter.y - groupCenter.y);
-      doZoom();
+      doZoom(bbox, padding, onlyOutOfViewPort, graph, animate, animateCfg);
     }
   }
 
