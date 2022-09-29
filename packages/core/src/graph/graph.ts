@@ -42,6 +42,7 @@ import Hull from '../item/hull';
 
 const { transform } = ext;
 const NODE = 'node';
+const comboEdgeIdPrefix = 'combo-edge-';
 
 export interface PrivateGraphOption extends GraphOptions {
   data: GraphData;
@@ -2175,6 +2176,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     });
 
     each(this.get('edges'), (edge: IEdge) => {
+      const edgeId = edge.getID();
+      if (edgeId && edgeId.startsWith(comboEdgeIdPrefix)) {
+        return;
+      }
+
       edges.push(getModelWithStates(edge) as EdgeConfig);
     });
 
@@ -2685,8 +2691,14 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         addedVEdgeMap[key] = {
           ...originalEdgeModel,
           ...vEdgeInfo,
-          id: `virtual-edge-for-${originalEdgeModel.id}`
+          id: comboEdgeIdPrefix + originalEdgeModel.id
         };
+
+        if (originalEdgeModel.id) {
+          addedVEdgeMap[key].id = comboEdgeIdPrefix + originalEdgeModel.id;
+        } else {
+          addedVEdgeMap[key].id = comboEdgeIdPrefix + Math.random() + Date.now();
+        }
       }
     });
 
