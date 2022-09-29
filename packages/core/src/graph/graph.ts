@@ -2631,8 +2631,10 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     edges.forEach(edge => {
       const { isVEdge, size = 1 } = edge.getModel();
       if (edge.isVisible() && !isVEdge) return;
-      let source = edge.getSource();
-      let target = edge.getTarget();
+      const originalEdgeModel = edge.getModel();
+      const source = edge.getSource();
+      const target = edge.getTarget();
+
       let otherEnd = null;
       let otherEndIsSource;
       if (source.getModel().id === comboModel.id ||
@@ -2664,7 +2666,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
 
         const otherEndId = otherEndModel.id;
 
-        const vEdgeInfo = otherEndIsSource ? {
+        const vEdgeInfo: Record<string, unknown> = otherEndIsSource ? {
           source: otherEndId,
           target: comboModel.id,
           size,
@@ -2680,14 +2682,18 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           addedVEdgeMap[key].size += size;
           return;
         }
-        addedVEdgeMap[key] = vEdgeInfo;
+        addedVEdgeMap[key] = {
+          ...originalEdgeModel,
+          ...vEdgeInfo,
+          id: `virtual-edge-for-${originalEdgeModel.id}`
+        };
       }
     });
 
     // update the width of the virtual edges, which is the sum of merged actual edges
     // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
     this.addItems(
-      Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'vedge', model: edgeInfo as EdgeConfig })),
+      Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'edge', model: edgeInfo as EdgeConfig })),
       false
     );
     this.emit('aftercollapseexpandcombo', { action: 'collapse', item: combo });
