@@ -1624,6 +1624,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     if (!dataValidation(data)) {
       return this;
     }
+    this.emit('beforechangedata');
     if (stack && this.get('enabledStack')) {
       this.pushStack('changedata', {
         before: self.save(),
@@ -1742,6 +1743,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     setTimeout(() => {
       canvas.set('localRefresh', localRefresh);
     }, 16);
+    this.emit('afterchangedata');
     return this;
   }
 
@@ -3043,6 +3045,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     }
 
     this.emit('stackchange', {
+      action,
+      stackType,
       undoStack: this.undoStack,
       redoStack: this.redoStack,
     });
