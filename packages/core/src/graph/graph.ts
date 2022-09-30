@@ -9,7 +9,7 @@ import {
   floydWarshall,
 } from '@antv/algorithm';
 import { IAbstractGraph } from '../interface/graph';
-import { IEdge, INode, ICombo, IItemBaseConfig } from '../interface/item';
+import { IEdge, INode, ICombo } from '../interface/item';
 import {
   GraphAnimateConfig,
   GraphOptions,
@@ -42,7 +42,6 @@ import Hull from '../item/hull';
 
 const { transform } = ext;
 const NODE = 'node';
-const comboEdgeIdPrefix = 'combo-edge-';
 
 export interface PrivateGraphOption extends GraphOptions {
   data: GraphData;
@@ -2176,11 +2175,6 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     });
 
     each(this.get('edges'), (edge: IEdge) => {
-      const edgeId = edge.getID();
-      if (edgeId && edgeId.startsWith(comboEdgeIdPrefix)) {
-        return;
-      }
-
       edges.push(getModelWithStates(edge) as EdgeConfig);
     });
 
@@ -2683,21 +2677,23 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           size,
           isVEdge: true,
         };
+
         const key = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
+
         if (addedVEdgeMap[key]) {
           addedVEdgeMap[key].size += size;
           return;
         }
+
         addedVEdgeMap[key] = {
           ...originalEdgeModel,
-          ...vEdgeInfo,
-          id: comboEdgeIdPrefix + originalEdgeModel.id
+          ...vEdgeInfo
         };
 
-        if (originalEdgeModel.id) {
-          addedVEdgeMap[key].id = comboEdgeIdPrefix + originalEdgeModel.id;
-        } else {
-          addedVEdgeMap[key].id = comboEdgeIdPrefix + Math.random() + Date.now();
+        if (addedVEdgeMap[key].style) {
+          // do not apply any status styles to vedge
+          // as it should not be interacted
+          addedVEdgeMap[key].style.status = {};
         }
       }
     });
@@ -2705,7 +2701,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     // update the width of the virtual edges, which is the sum of merged actual edges
     // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
     this.addItems(
-      Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'edge', model: edgeInfo as EdgeConfig })),
+      Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'vedge', model: edgeInfo as EdgeConfig })),
       false
     );
     this.emit('aftercollapseexpandcombo', { action: 'collapse', item: combo });
