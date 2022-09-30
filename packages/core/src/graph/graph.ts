@@ -2687,14 +2687,12 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           return;
         }
 
-        addedVEdgeMap[key] = {
-          ...originalEdgeModel,
-          ...vEdgeInfo
-        };
+        addedVEdgeMap[key] = vEdgeInfo;
 
-        if (addedVEdgeMap[key].style) {
+        if (originalEdgeModel.style) {
           // do not apply any status styles to vedge
           // as it should not be interacted
+          addedVEdgeMap[key].style = originalEdgeModel.style;
           addedVEdgeMap[key].style.status = {};
         }
       }
