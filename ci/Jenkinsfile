@@ -47,6 +47,13 @@ pipeline {
           sh 'curl -u"${ARTIFACTORY_USERNAME}:${ARTIFACTORY_PASSWORD}" https://artifactory.siren.io/artifactory/api/npm/sirensolutions-npm-local/auth/antv > ~/.npmrc'
           script {
             ['core', 'element', 'plugin', 'pc', 'g6'].each {
+              def packageJSON = readJSON file: "${env.WORKSPACE}/packages/${it}/package.json"
+              def version = packageJSON.version
+              def packageName = (it == 'g6' ? 'g6' : "g6-${it}")
+
+              sh "curl -u\"\${ARTIFACTORY_USERNAME}:\${ARTIFACTORY_PASSWORD}\" -X DELETE https://artifactory.siren.io/ui/repos/tree/General/sirensolutions-npm-local/@antv/${packageName}/-/@antv/${packageName}-${version}.tgz || true"
+              sh "curl -u\"\${ARTIFACTORY_USERNAME}:\${ARTIFACTORY_PASSWORD}\" -X DELETE https://artifactory.siren.io/ui/repos/tree/General/sirensolutions-npm-local/.npm/@antv/${packageName}/@antv/${packageName}-${version}.json || true"
+
               sh "cd packages/${it} && npm run build && npm publish --registry=https://artifactory.siren.io/artifactory/api/npm/sirensolutions-npm-local && cd .."
             }
           }
