@@ -353,20 +353,15 @@ export default class ItemController {
    * 
    * @param {ICombo} combo 
    */
-  public updateParentCombo(combo: ICombo) {
+  public updateAncestorCombos(combo: ICombo) {
     const model = combo.getModel() as ComboConfig;
     if (model.parentId) {
       const graph = this.graph;
       const parent = graph.findById(model.parentId) as ICombo;
       const parentModel = parent.getModel();
-      const parentBbox = getComboBBox(parentModel.children as ComboTree[], graph, parent);
 
-      parentBbox.width += 10;
-      parentBbox.height += 10;
-      parent.set('bbox', parentBbox);
-      parent.refresh("bbox")
-
-      this.updateParentCombo(parent);
+      this.updateCombo(parent, parentModel.children as ComboTree[], false);
+      this.updateAncestorCombos(parent);
     }
   }
 
@@ -447,6 +442,9 @@ export default class ItemController {
     children.combos.forEach((c) => {
       graph.hideItem(c, stack);
     });
+    setTimeout(() => {
+      this.updateAncestorCombos(combo as ICombo);
+    }, 0);
   }
 
   /**
@@ -500,12 +498,9 @@ export default class ItemController {
         graph.showItem(c, stack);
       }
     });
-
-    if (!isString(combo)) {
-      setTimeout(() => {
-        this.updateParentCombo(combo as ICombo);
-      }, 100);
-    }
+    setTimeout(() => {
+      this.updateAncestorCombos(combo as ICombo);
+    }, 0);
   }
 
   /**
