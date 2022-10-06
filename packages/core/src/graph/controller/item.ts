@@ -501,7 +501,7 @@ export default class ItemController {
       }
     });
 
-    if (typeof combo !== 'string') {
+    if (!isString(combo)) {
       setTimeout(() => {
         this.updateParentCombo(combo as ICombo);
       }, 100);
