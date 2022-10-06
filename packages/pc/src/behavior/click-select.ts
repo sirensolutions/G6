@@ -1,4 +1,4 @@
-import { each } from '@antv/util';
+import { each, debounce } from '@antv/util';
 import { G6Event, IG6GraphEvent } from '@antv/g6-core';
 
 const DEFAULT_TRIGGER = 'shift';
@@ -27,14 +27,14 @@ export default {
     }
     if (!self.multiple) {
       return {
-        'node:click': 'onClick',
+        'node:click': 'debounceOnClick',
         'combo:click': 'onClick',
         'edge:click': 'onClick',
         'canvas:click': 'onCanvasClick',
       };
     }
     return {
-      'node:click': 'onClick',
+      'node:click': 'debounceOnClick',
       'combo:click': 'onClick',
       'edge:click': 'onClick',
       'canvas:click': 'onCanvasClick',
@@ -43,6 +43,11 @@ export default {
     };
   },
   onClick(evt: IG6GraphEvent) {
+    // Return if double click
+    if (evt.originalEvent.detail === 2) {
+      return
+    }
+
     const self = this;
     const { item } = evt;
     if (!item || item.destroyed) {
@@ -129,6 +134,12 @@ export default {
       });
     }
   },
+  debounceOnClick: debounce(
+    // Prevent onClick firing twice when double clicking
+    function (evt: IG6GraphEvent) {
+      this.onClick(evt);
+    }, 300
+  ),
   onCanvasClick(evt: IG6GraphEvent) {
     const { graph, shouldBegin } = this;
     if (!shouldBegin.call(this, evt)) {
