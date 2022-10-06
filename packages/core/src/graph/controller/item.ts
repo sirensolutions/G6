@@ -353,14 +353,16 @@ export default class ItemController {
    * 
    * @param {ICombo} combo 
    */
-  public updateParentCombo (combo: ICombo) {
+  public updateParentCombo(combo: ICombo) {
     const model = combo.getModel() as ComboConfig;
     if (model.parentId) {
       const graph = this.graph;
       const parent = graph.findById(model.parentId) as ICombo;
       const parentModel = parent.getModel();
       const parentBbox = getComboBBox(parentModel.children as ComboTree[], graph, parent);
-  
+
+      parentBbox.width += 10;
+      parentBbox.height += 10;
       parent.set('bbox', parentBbox);
       parent.refresh("bbox")
 
@@ -498,11 +500,11 @@ export default class ItemController {
         graph.showItem(c, stack);
       }
     });
-    
+
     if (typeof combo !== 'string') {
       setTimeout(() => {
         this.updateParentCombo(combo as ICombo);
-      }, 200);
+      }, 100);
     }
   }
 
