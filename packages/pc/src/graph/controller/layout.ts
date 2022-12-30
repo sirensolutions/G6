@@ -116,7 +116,7 @@ export default class LayoutController extends AbstractLayout {
       layoutCfg.onLayoutEnd = () => {
         graph.emit('aftersublayout', { type: layoutType });
         reslove();
-      }
+      };
 
       // 若用户指定开启 gpu，且当前浏览器支持 webgl，且该算法存在 GPU 版本（目前仅支持 fruchterman 和 gForce），使用 gpu 版本的布局
       if (layoutType && this.isGPU) {
@@ -131,7 +131,8 @@ export default class LayoutController extends AbstractLayout {
 
       if (Util.isForce(layoutType)) {
         const { onTick, animate } = layoutCfg;
-        const isDefaultAnimateLayout = animate === undefined && (layoutType === 'force' || layoutType === 'force2');
+        const isDefaultAnimateLayout =
+          animate === undefined && (layoutType === 'force' || layoutType === 'force2');
         const tick = () => {
           if (onTick) {
             onTick();
@@ -149,7 +150,7 @@ export default class LayoutController extends AbstractLayout {
       try {
         layoutMethod = new Layout[layoutType](layoutCfg);
         if (this.layoutMethods[order]) {
-          this.layoutMethods[order].destroy()
+          this.layoutMethods[order].destroy();
         }
         this.layoutMethods[order] = layoutMethod;
       } catch (e) {
@@ -189,7 +190,7 @@ export default class LayoutController extends AbstractLayout {
       layoutCfg.onLayoutEnd = () => {
         graph.emit('aftersublayout', { type: layoutType });
         reslove();
-      }
+      };
 
       const layoutData = this.filterLayoutData(this.data, layoutCfg);
       layoutMethod.init(layoutData);
@@ -233,7 +234,12 @@ export default class LayoutController extends AbstractLayout {
     graph.emit('beforelayout');
 
     // 增量情况下（上一次的布局与当前布局一致），使用 treakInit
-    if (preLayoutTypes?.length && layoutType && preLayoutTypes?.length === 1 && preLayoutTypes[0] === layoutType) {
+    if (
+      preLayoutTypes?.length &&
+      layoutType &&
+      preLayoutTypes?.length === 1 &&
+      preLayoutTypes[0] === layoutType
+    ) {
       this.tweakInit();
     } else {
       // 初始化位置，若配置了 preset，则使用 preset 的参数生成布局作为预布局，否则使用 grid
@@ -313,14 +319,16 @@ export default class LayoutController extends AbstractLayout {
 
     if (hasLayout) {
       // 最后统一在外部调用onAllLayoutEnd
-      start.then(() => {
-        if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
-        // 在执行 execute 后立即执行 success，且在 timeBar 中有 throttle，可以防止 timeBar 监听 afterrender 进行 changeData 后 layout，从而死循环
-        // 对于 force 一类布局完成后的 fitView 需要用户自己在 onLayoutEnd 中配置
-        if (success) success();
-      }).catch((error) => {
-        console.warn('graph layout failed,', error);
-      });
+      start
+        .then(() => {
+          if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
+          // 在执行 execute 后立即执行 success，且在 timeBar 中有 throttle，可以防止 timeBar 监听 afterrender 进行 changeData 后 layout，从而死循环
+          // 对于 force 一类布局完成后的 fitView 需要用户自己在 onLayoutEnd 中配置
+          if (success) success();
+        })
+        .catch((error) => {
+          console.warn('graph layout failed,', error);
+        });
     } else {
       // 无布局配置
       graph.refreshPositions();
@@ -338,7 +346,7 @@ export default class LayoutController extends AbstractLayout {
     const { nodes, edges } = data;
     if (!nodes?.length) return;
     const positionMap = {};
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       const { x, y } = node;
       if (!isNaN(x) && !isNaN(y)) {
         positionMap[node.id] = { x, y };
@@ -346,29 +354,32 @@ export default class LayoutController extends AbstractLayout {
         node.mass = node.mass || 2;
       }
     });
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       const { source, target } = edge;
-      const sourcePosition = positionMap[source]
-      const targetPosition = positionMap[target]
+      const sourcePosition = positionMap[source];
+      const targetPosition = positionMap[target];
       if (!sourcePosition && targetPosition) {
         positionMap[source] = {
           x: targetPosition.x + (Math.random() - 0.5) * 80,
-          y: targetPosition.y + (Math.random() - 0.5) * 80
-        }
+          y: targetPosition.y + (Math.random() - 0.5) * 80,
+        };
       } else if (!targetPosition && sourcePosition) {
         positionMap[target] = {
           x: sourcePosition.x + (Math.random() - 0.5) * 80,
-          y: sourcePosition.y + (Math.random() - 0.5) * 80
-        }
+          y: sourcePosition.y + (Math.random() - 0.5) * 80,
+        };
       }
     });
     const width = graph.get('width');
     const height = graph.get('height');
-    nodes.forEach(node => {
-      const position = positionMap[node.id] || { x: width / 2 + (Math.random() - 0.5) * 20, y: height / 2 + (Math.random() - 0.5) * 20 };
+    nodes.forEach((node) => {
+      const position = positionMap[node.id] || {
+        x: width / 2 + (Math.random() - 0.5) * 20,
+        y: height / 2 + (Math.random() - 0.5) * 20,
+      };
       node.x = position.x;
       node.y = position.y;
-    })
+    });
   }
 
   public initWithPreset(): boolean {
@@ -417,12 +428,14 @@ export default class LayoutController extends AbstractLayout {
 
     if (hasLayout) {
       // 最后统一在外部调用onAllLayoutEnd
-      start.then(() => {
-        if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
-        success?.()
-      }).catch((error) => {
-        console.error('layout failed', error);
-      });
+      start
+        .then(() => {
+          if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
+          success?.();
+        })
+        .catch((error) => {
+          console.error('layout failed', error);
+        });
     }
 
     return true;
@@ -437,8 +450,8 @@ export default class LayoutController extends AbstractLayout {
     const gpuWorkerAbility =
       isGPU &&
       typeof window !== 'undefined' &&
-      // eslint-disable-next-line @typescript-eslint/dot-notation
       window.navigator &&
+      // eslint-disable-next-line @typescript-eslint/dot-notation
       !navigator[`gpu`] && // WebGPU 还不支持 OffscreenCanvas
       'OffscreenCanvas' in window &&
       'transferControlToOffscreen' in offScreenCanvas;
@@ -447,7 +460,7 @@ export default class LayoutController extends AbstractLayout {
     // 例如：'function could not be cloned'。
     // 详情参考：https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
     // 所以这里需要把过滤layoutCfg里的函数字段过滤掉。
-    const filteredLayoutCfg = filterObject(layoutCfg, value => typeof value !== 'function');
+    const filteredLayoutCfg = filterObject(layoutCfg, (value) => typeof value !== 'function');
     if (!gpuWorkerAbility) {
       worker.postMessage({
         type: LAYOUT_MESSAGE.RUN,
@@ -584,11 +597,13 @@ export default class LayoutController extends AbstractLayout {
     }
 
     if (hasLayout) {
-      start.then(() => {
-        if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
-      }).catch((error) => {
-        console.warn('layout failed', error);
-      });
+      start
+        .then(() => {
+          if (layoutCfg.onAllLayoutEnd) layoutCfg.onAllLayoutEnd();
+        })
+        .catch((error) => {
+          console.warn('layout failed', error);
+        });
     }
   }
 
@@ -600,7 +615,9 @@ export default class LayoutController extends AbstractLayout {
       }
 
       if (!LAYOUT_PIPES_ADJUST_NAMES.includes(adjust)) {
-        console.warn(`The adjust type ${adjust} is not supported yet, please assign it with 'force', 'grid', or 'circular'.`);
+        console.warn(
+          `The adjust type ${adjust} is not supported yet, please assign it with 'force', 'grid', or 'circular'.`,
+        );
         resolve();
       }
 
@@ -608,7 +625,7 @@ export default class LayoutController extends AbstractLayout {
         center: this.layoutCfg.center,
         nodeSize: (d) => Math.max(d.height, d.width),
         preventOverlap: true,
-        onLayoutEnd: () => { },
+        onLayoutEnd: () => {},
       };
 
       // 计算出大单元
@@ -626,7 +643,7 @@ export default class LayoutController extends AbstractLayout {
           });
         });
         resolve();
-      }
+      };
 
       const layoutMethod = new Layout[adjust](layoutCfg);
       layoutMethod.layout({ nodes: layoutNodes });
@@ -668,7 +685,7 @@ function updateLayoutPosition(data, layoutData) {
 function filterObject(collection, callback) {
   const result = {};
   if (collection && typeof collection === 'object') {
-    Object.keys(collection).forEach(key => {
+    Object.keys(collection).forEach((key) => {
       if (collection.hasOwnProperty(key) && callback(collection[key])) {
         result[key] = collection[key];
       }
@@ -697,7 +714,7 @@ function addLayoutOrder(data, order) {
     return;
   }
   const { nodes } = data;
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     node.layoutOrder = order;
   });
 }
