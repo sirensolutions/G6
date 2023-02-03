@@ -87,6 +87,13 @@ export default {
     // 获取所有选中的 Combo
     const combos = graph.findAllByState('combo', this.selectedState);
 
+    // Support dragging nodes
+    const nodes = graph.findAllByState('node', this.selectedState);
+
+    if (nodes.length) {
+      combos.push(...nodes);
+    }
+
     const currentCombo = item.get('id');
 
     const dragCombos = combos.filter((combo) => {
@@ -100,10 +107,18 @@ export default {
       this.targets = combos;
     }
 
-    const beforeDragItems = [];
+    const beforeDragItems = {
+      combos: [],
+      nodes: []
+    };
+
     this.targets.forEach((t) => {
+      const type = t.getType();
       const { x, y, id } = t.getModel();
-      beforeDragItems.push({ x, y, id });
+      type === 'combo' ?
+        beforeDragItems.combos.push({ x, y, id }) :
+        // Support dragging nodes
+        beforeDragItems.nodes.push({ x, y, id });
     });
     this.set('beforeDragItems', beforeDragItems);
 
@@ -347,19 +362,28 @@ export default {
     if (!comboDropedOn) {
       const stack = graph.get('enabledStack') && this.enableStack;
 
+      // Support dragging nodes
+      const beforeDragItems = this.get('beforeDragItems');
+
       const stackData = {
-        before: { nodes: [], edges: [], combos: [].concat(this.get('beforeDragItems')) },
+        before: { nodes: beforeDragItems.nodes, edges: [], combos: beforeDragItems.combos },
         after: { nodes: [], edges: [], combos: [] },
       };
 
-      this.targets.map((combo: ICombo) => {
+      this.targets.map((item: ICombo | INode) => {
         // 将 Combo 放置到某个 Combo 上面时，只有当 onlyChangeComboSize 为 false 时候才更新 Combo 结构
         if (!this.onlyChangeComboSize) {
-          graph.updateComboTree(combo, undefined, false);
+          graph.updateComboTree(item, undefined, false);
         } else {
-          graph.updateCombo(combo);
-          const { x, y, id } = combo.getModel();
-          stackData.after.combos.push({ x, y, id });
+          const { x, y, id } = item.getModel();
+
+          // Support dragging nodes
+          if (item.getType() === 'combo') {
+            graph.updateCombo(item as ICombo);
+            stackData.after.combos.push({ x, y, id });
+          } else {
+            stackData.after.nodes.push({ x, y, id });
+          }
         }
       });
 
