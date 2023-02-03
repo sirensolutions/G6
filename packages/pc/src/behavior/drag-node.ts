@@ -165,6 +165,13 @@ export default {
     // 获取所有选中的元素
     const nodes = graph.findAllByState('node', this.selectedState);
 
+    // Support combo in selection
+    const combos = graph.findAllByState('combo', this.selectedState);
+
+    if (combos.length) {
+      nodes.push(...combos);
+    }
+
     const currentNodeId = item.get('id');
 
     // 当前拖动的节点是否是选中的节点
@@ -299,12 +306,20 @@ export default {
       };
 
       this.get('beforeDragNodes').forEach(model => {
-        stackData.before.nodes.push(model);
+        const type = this.graph.findById(model.id).getType();
+        // Support combo drag
+        type === 'node' ?
+          stackData.before.nodes.push(model) :
+          stackData.before.combos.push(model);
       });
 
       this.targets.forEach(target => {
+        const type = target.getType();
         const { x, y, id } = target.getModel();
-        stackData.after.nodes.push({ x, y, id });
+        // Support combo drag
+        type === 'node' ?
+          stackData.after.nodes.push({ x, y, id }) :
+          stackData.after.combos.push({ x, y, id });
       });
       graph.pushStack('update', clone(stackData));
     }
