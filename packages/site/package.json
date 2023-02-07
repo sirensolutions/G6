@@ -38,7 +38,7 @@
     "@antv/chart-node-g6": "^0.0.3",
     "@antv/dumi-theme-antv": "^0.3.0-beta.5",
     "@antv/g6": "4.8.5-siren.0",
-    "@antv/g6-react-node": "1.4.5-siren.11",
+    "@antv/g6-react-node": "1.4.5-siren.12",
     "@antv/util": "^2.0.9",
     "@antv/vis-predict-engine": "^0.1.1",
     "@microsoft/api-extractor": "^7.33.6",
