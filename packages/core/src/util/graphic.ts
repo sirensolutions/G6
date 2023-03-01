@@ -1,22 +1,22 @@
-import { IGroup, BBox } from '@antv/g-base';
+import { BBox, IGroup } from '@antv/g-base';
 import { vec2 } from '@antv/matrix-util';
+import { clone, isArray, isNumber, isObject, isString } from '@antv/util';
 import Global from '../global';
+import { IAbstractGraph } from '../interface/graph';
 import {
+  ComboConfig,
+  ComboTree,
   EdgeData,
+  GraphAnimateConfig,
   IBBox,
+  ICombo,
   IPoint,
   IShapeBase,
   LabelStyle,
   NodeConfig,
-  ComboTree,
-  ComboConfig,
-  ICombo,
-  GraphAnimateConfig,
 } from '../types';
-import { applyMatrix } from './math';
 import letterAspectRatio from './letterAspectRatio';
-import { isString, clone, isNumber, isObject, isArray } from '@antv/util';
-import { IAbstractGraph } from '../interface/graph';
+import { applyMatrix } from './math';
 
 const { PI, sin, cos } = Math;
 
@@ -78,8 +78,8 @@ export const getLoopCfgs = (cfg: EdgeData): EdgeData => {
   // 自环边与keyShape的相对位置关系
   const position: string = loopCfg.position || Global.defaultLoopPosition;
 
-  // 中心取group上真实位置
-  const center = [containerMatrix[6], containerMatrix[7]];
+  // 中心取节点 keyShape bbox 的中心位置 + 节点位置坐标
+  const center = [(bbox.minX + bbox.maxX) / 2 + containerMatrix[6], (bbox.minY + bbox.maxY) / 2 + containerMatrix[7]];
   let startPoint = [cfg.startPoint.x, cfg.startPoint.y];
   let endPoint = [cfg.endPoint.x, cfg.endPoint.y];
 
@@ -348,7 +348,7 @@ const traverse = <T extends { children?: T[] }>(
   data: T,
   parent: T | null,
   index: number,
-  fn: (data: T, parent: T | null, index: number) => boolean
+  fn: (data: T, parent: T | null, index: number) => boolean,
 ) => {
   if (fn(data, parent, index) === false) {
     return false;
@@ -370,7 +370,7 @@ const traverseUp = <T extends { children?: T[] }>(
   data: T,
   parent: T | null,
   index: number,
-  fn: (data: T, parent: T | null, index: number) => boolean
+  fn: (data: T, parent: T | null, index: number) => boolean,
 ) => {
   if (data && data.children) {
     for (let i = data.children.length - 1; i >= 0; i--) {
@@ -390,7 +390,7 @@ const traverseUp = <T extends { children?: T[] }>(
  */
 export const traverseTree = <T extends { children?: T[] }>(
   data: T,
-  fn: (data: T, parent: T | null, index: number) => boolean
+  fn: (data: T, parent: T | null, index: number) => boolean,
 ) => {
   if (typeof fn !== 'function') {
     return;
@@ -688,8 +688,8 @@ export const getComboBBox = (
     const comboModel = combo?.getModel();
     const { x, y, fixSize, collapsed, fixCollapseSize } = comboModel || {};
     const useFixSize = collapsed ? fixCollapseSize : fixSize;
-    const [ width, height ] = isArray(useFixSize) ? useFixSize : [useFixSize, useFixSize];
-    const halfSize = [ width / 2, height / 2 ];
+    const [width, height] = isArray(useFixSize) ? useFixSize : [useFixSize, useFixSize];
+    const halfSize = [width / 2, height / 2];
     return {
       minX: x - halfSize[0],
       minY: y - halfSize[1],
@@ -698,7 +698,7 @@ export const getComboBBox = (
       x: x,
       y: y,
       width,
-      height
+      height,
     };
   }
 
