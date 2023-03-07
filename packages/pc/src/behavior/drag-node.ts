@@ -104,6 +104,7 @@ export default {
     this.mousedown = {
       item: evt.item,
       target: evt.target,
+      origin: { x: evt.x, y: evt.y }
     };
 
     // 绑定浏览器监听，触发拖拽结束，结束拖拽时移除
@@ -224,10 +225,7 @@ export default {
       });
     }
 
-    this.origin = {
-      x: evt.x,
-      y: evt.y,
-    };
+    this.origin = this.mousedown.origin;
 
     this.point = {};
     this.originPoint = {};
