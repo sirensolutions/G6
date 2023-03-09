@@ -74,6 +74,7 @@ export default {
     this.mousedown = {
       item: evt.item,
       target: evt.target,
+      origin: { x: evt.x, y: evt.y }
     };
     this.dragstart = true;
     self.onDragStart(evt);
