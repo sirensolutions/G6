@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { Point } from '@antv/g-base';
 import Hierarchy from '@antv/hierarchy';
-import { each, isObject, isString } from '@antv/util';
+import { each, isObject, isString, clone } from '@antv/util';
 import {
   GraphData,
   Item,
@@ -9,7 +9,7 @@ import {
   ShapeStyle,
   TreeGraphData,
   GraphOptions,
-  IPoint,
+  IPoint
 } from '@antv/g6-core';
 import { ITreeGraph } from '../interface/graph';
 import Util from '../util';
@@ -291,6 +291,30 @@ export default class TreeGraph extends Graph implements ITreeGraph {
     self.set('layout', layout);
     self.set('layoutMethod', self.getLayout());
     self.layout();
+
+    // align the graph after layout
+    if (align) {
+      let toPoint = alignPoint;
+      if (!toPoint) {
+        if (align === 'begin') toPoint = { x: 0, y: 0 };
+        else toPoint = { x: this.getWidth() / 2, y: this.getHeight() / 2 };
+      }
+      // translate to point coordinate system
+      toPoint = this.getPointByCanvas(toPoint.x, toPoint.y);
+
+      const matrix = this.getGroup().getMatrix() || [1, 0, 0, 0, 1, 0, 0, 0, 1];
+      toPoint.x = toPoint.x * matrix[0] + matrix[6];
+      toPoint.y = toPoint.y * matrix[0] + matrix[7];
+
+      const { minX, maxX, minY, maxY } = this.getGroup().getCanvasBBox();
+      const bboxPoint = { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+      if (align === 'begin') {
+        bboxPoint.x = minX;
+        bboxPoint.y = minY;
+      }
+
+      this.translate(toPoint.x - bboxPoint.x, toPoint.y - bboxPoint.y);
+    }
   }
 
   /**
@@ -313,9 +337,38 @@ export default class TreeGraph extends Graph implements ITreeGraph {
    */
   public layout(fitView?: boolean) {
     const self = this;
-    const data: TreeGraphData = self.get('data');
+    let data: TreeGraphData = self.get('data');
     const layoutMethod = self.get('layoutMethod');
-    const layoutData = layoutMethod ? layoutMethod(data, self.get('layout')) : data;
+    const layoutConfig = self.get('layout');
+
+    let layoutData = data;
+    if (layoutConfig?.excludeInvisibles) {
+      data = clone(self.get('data'));
+      traverseTree<TreeGraphData>(data, subTree => {
+        const siblings = subTree.children;
+        if (!siblings?.length) return true;
+        for (let i = siblings.length - 1; i >= 0; i--) {
+          const node = this.findById(siblings[i].id);
+          let isHidden = node ? !node.isVisible() : siblings[i].visible === false;
+          if (isHidden) siblings.splice(i, 1);
+        }
+      });
+      layoutData = layoutMethod ? layoutMethod(data, self.get('layout')) : data;
+      traverseTree<TreeGraphData>(layoutData, subTree => {
+        const node = this.findDataById(subTree.id);
+        if (!node) return;
+        node.data = subTree.data;
+        node.x = subTree.x;
+        node.y = subTree.y;
+      });
+      layoutData = self.get('data');
+      traverseTree<TreeGraphData>(layoutData, subTree => {
+        if (!subTree.data) subTree.data = { ...subTree }
+      });
+    } else {
+      layoutData = layoutMethod ? layoutMethod(data, self.get('layout')) : data;
+    }
+
 
     const animate: boolean = self.get('animate');
 
@@ -630,7 +683,7 @@ export default class TreeGraph extends Graph implements ITreeGraph {
    * 设置视图初始化数据
    * @param {TreeGraphData} data 初始化数据
    */
-  public data(data?: TreeGraphData): void {
+  public data(data?: GraphData | TreeGraphData): void {
     super.data(data);
     this.set('originData', JSON.parse(JSON.stringify(data)));
   }
