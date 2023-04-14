@@ -1667,11 +1667,14 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     }
 
     this.diffItems('node', items, (data as GraphData).nodes!);
-
+    const invisibleCombos = new Set();
     each(itemMap, (item: INode & IEdge & ICombo, id: number) => {
       itemMap[id].getModel().depth = 0;
       if (item.getType && item.getType() === 'edge') return;
       if (item.getType && item.getType() === 'combo') {
+        if (!item.isVisible()) {
+          invisibleCombos.add(item.getID());
+        }
         delete itemMap[id];
         item.destroy();
       } else if (items.nodes.indexOf(item) < 0) {
@@ -1697,6 +1700,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         this.sortCombos();
       }
     }
+    
+    // set visibility state of combos as before
+    self.getCombos().forEach(combo => {
+      if (invisibleCombos.has(combo.getID())) {
+        combo.hide();
+      }
+    })
 
     this.diffItems('edge', items, (data as GraphData).edges!);
     each(itemMap, (item: INode & IEdge & ICombo, id: number) => {
