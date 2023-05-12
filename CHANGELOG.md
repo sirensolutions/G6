@@ -1,5 +1,28 @@
 # ChangeLog
 
+### 4.8.13
+
+- fix: webpack dependency;
+
+### 4.8.12
+
+- feat: timebar supports individual container DOM;
+- fix: remove label if no longer present;
+
+### 4.8.11-beta.0
+
+- fix: position animations;
+
+### 4.8.10
+
+- fix: update layout from animate false to true;
+
+### 4.8.9
+
+- fix: type for draw function in elements, closes: #4395;
+- fix: force2 with webworker, closes: #4394;
+- fix: excludeInvisibles with collapse-expand behavior problem;
+
 ### 4.8.8
 
 - feat: preset layout with gpu layout;
