@@ -751,7 +751,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         // Clear animations to prevent zoom-in and zoom-out animations to be triggered together
         group.set('animations', []);
       }
-      
+
       group.animate((ratio: number) => {
         if (ratio === 1) {
           // Reuse the first transformation
@@ -1367,16 +1367,31 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       unupdatedModel = clone(currentItem.getModel());
     }
 
+    if (cfg.states && currentItem.getModel().states) {
+      // if `.states` is passed to update item
+      // and also presented on the previous model
+      // give priority to `cfg.states`
+      currentItem.getModel().states = {};
+    }
+
     let type = '';
     if (currentItem.getType) type = currentItem.getType();
     const states = [...currentItem.getStates()];
-    if (type === 'combo') {
+    if (type === 'combo' || type === 'node') {
       each(states, state => this.setItemState(currentItem, state, false));
     }
     itemController.updateItem(currentItem, cfg);
 
     if (type === 'combo') {
       each(states, state => this.setItemState(currentItem, state, true));
+    }
+
+    if (cfg.states) {
+      currentItem.clearStates();
+
+      Object.keys(cfg.states).forEach(key => {
+        currentItem.setState(key, cfg.states[key]);
+      });
     }
 
     if (stackEnabled) {
@@ -1700,7 +1715,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         this.sortCombos();
       }
     }
-    
+
     // set visibility state of combos as before
     self.getCombos().forEach(combo => {
       if (invisibleCombos.has(combo.getID())) {
