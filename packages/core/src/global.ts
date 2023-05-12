@@ -64,7 +64,7 @@ const colorSet = {
 };
 
 export default {
-  version: '0.8.8-siren.1',
+  version: '0.8.13-siren.0',
   rootContainerClassName: 'root-container',
   nodeContainerClassName: 'node-container',
   edgeContainerClassName: 'edge-container',
@@ -252,6 +252,6 @@ export default {
   windowFontFamily:
     typeof window !== 'undefined' && window.getComputedStyle && document.body
       ? window.getComputedStyle(document.body, null).getPropertyValue('font-family') ||
-        'Arial, sans-serif'
+      'Arial, sans-serif'
       : 'Arial, sans-serif',
 };

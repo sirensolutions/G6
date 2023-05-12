@@ -1556,9 +1556,7 @@ describe('redo stack & undo stack', () => {
   graph.data(data);
   graph.render();
 
-  // **siren** - Skipping this test as upstream changes seem to ignore this logic
-  // https://github.com/antvis/G6/pull/4178/commits/69a861736ea35b6586cb5b89d51c85d6713005f6
-  it.skip('fill undo stack', () => {
+  it('fill undo stack', () => {
     // redo 后，undo stack 有一条数据
     // it('fill undo stack', () => {
     let stackData = graph.getStackData();
@@ -1736,8 +1734,7 @@ describe('states', () => {
     expect(items[5].getStates()).toEqual([]);
   });
 
-  // Skipping this test to be fixed by - https://sirensolutions.atlassian.net/browse/INVE-20493
-  it.skip('should change data and swap initial states on updated item if model has it', () => {
+  it('should change data and swap initial states on updated item if model has it', () => {
     graph.changeData({
       nodes: [
         {
