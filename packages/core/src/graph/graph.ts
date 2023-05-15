@@ -1377,7 +1377,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     let type = '';
     if (currentItem.getType) type = currentItem.getType();
     const states = [...currentItem.getStates()];
-    if (type === 'combo' || type === 'node') {
+    if (type === 'combo') {
       each(states, state => this.setItemState(currentItem, state, false));
     }
     itemController.updateItem(currentItem, cfg);
