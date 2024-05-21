@@ -83,8 +83,8 @@ export const getLoopCfgs = (cfg: EdgeData): EdgeData => {
   let startPoint = [cfg.startPoint.x, cfg.startPoint.y];
   let endPoint = [cfg.endPoint.x, cfg.endPoint.y];
 
-  let halfOfHeight = bbox.height / 2;
-  let halfOfWidth = bbox.width / 2;
+  const halfOfHeight = bbox.height / 2;
+  const halfOfWidth = bbox.width / 2;
   let rstart = halfOfHeight;
   let rend = halfOfHeight;
 
@@ -752,6 +752,7 @@ export const cloneBesidesImg = (obj) => {
   const clonedObj = {};
   Object.keys(obj).forEach((key1) => {
     const obj2 = obj[key1];
+    if (key1 === 'img' && !isString(obj2)) return;
     if (isObject(obj2) && !isArray(obj2)) {
       const clonedObj2 = {};
       Object.keys(obj2).forEach((key2) => {

@@ -9,6 +9,7 @@ es
 
 # lock
 package-lock.json
+pnpm-lock.yaml
 
 # Runtime data
 pids
@@ -81,7 +82,7 @@ esm
 
 es
 
-.github
+
 # .storybook
 .vscode/
 

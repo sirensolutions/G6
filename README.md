@@ -1,54 +1,54 @@
-# G6：图分析引擎
+<img src="https://gw.alipayobjects.com/zos/antfincdn/R8sN%24GNdh6/language.svg" width="18"> English | [简体中文](./README.zh-CN.md)
+
+<h1 align="center">
+<b>G6: A Graph Visualization Framework in TypeScript</b>
+</h1>
 
 ![](https://user-images.githubusercontent.com/6113694/45008751-ea465300-b036-11e8-8e2a-166cbb338ce2.png)
 
-[![travis-ci](https://img.shields.io/travis/antvis/g6.svg)](https://travis-ci.org/antvis/g6) [![codecov](https://codecov.io/gh/antvis/G6/branch/master/graph/badge.svg)](https://codecov.io/gh/antvis/G6) ![typescript](https://img.shields.io/badge/language-typescript-red.svg) ![MIT](https://img.shields.io/badge/license-MIT-000000.svg) [![npm package](https://img.shields.io/npm/v/@antv/g6.svg)](https://www.npmjs.com/package/@antv/g6) [![NPM downloads](http://img.shields.io/npm/dm/@antv/g6.svg)](https://npmjs.org/package/@antv/g6) [![Percentage of issues still open](http://isitmaintained.com/badge/open/antvis/g6.svg)](http://isitmaintained.com/project/antvis/g6 'Percentage of issues still open')
+[![build](https://github.com/antvis/G6/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/antvis/G6/actions/)
+[![Coverage Status](https://coveralls.io/repos/github/antvis/G6/badge.svg?branch=master)](https://coveralls.io/github/antvis/G6?branch=master)
+![typescript](https://img.shields.io/badge/language-typescript-red.svg) 
+![MIT](https://img.shields.io/badge/license-MIT-000000.svg) 
+[![npm package](https://img.shields.io/npm/v/@antv/g6.svg)](https://www.npmjs.com/package/@antv/g6) 
+[![NPM downloads](http://img.shields.io/npm/dm/@antv/g6.svg)](https://npmjs.org/package/@antv/g6) 
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/antvis/g6.svg)](http://isitmaintained.com/project/antvis/g6)
 
-[English README](README.en-US.md)
+## What is G6
 
-## 什么是 G6
+[G6](https://github.com/antvis/g6) is a graph visualization engine, which provides a set of basic mechanisms, including rendering, layout, analysis, interaction, animation, and other auxiliary tools. G6 aims to simplify the relationships, and help people to obtain the insight of relational data. Developers are able to build graph visualization **analysis** applications or graph visualization **modeling** applications easily.
 
-[G6](https://github.com/antvis/g6) 是一个图可视化引擎。它提供了图的绘制、布局、分析、交互、动画等图可视化的基础能力。旨在让关系变得透明，简单。让用户获得关系数据的 Insight。
+<img src='https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*_PJ5SZELwq0AAAAAAAAAAAAADmJ7AQ/original' width=550 alt='' />
 
 <img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*zTjwQaXokeQAAAAAAAAAAABkARQnAQ' width=550 alt='' />
 
-基于 G6，用户可以快速搭建自己的 **图分析** 或 **图编辑** 应用。
-
 <img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*zau8QJcVpDQAAAAAAAAAAABkARQnAQ' height=200 alt='' /><img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*RIlETY_S6IoAAAAAAAAAAABkARQnAQ' height=200 alt='' />
 
-<img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*cDzXR4jIWr8AAAAAAAAAAABkARQnAQ' height=150 alt='' /><img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*DifbSahOblAAAAAAAAAAAABkARQnAQ' height=150 /><img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*HTasSJGC4koAAAAAAAAAAABkARQnAQ' height=150 alt='' />
+<img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*cDzXR4jIWr8AAAAAAAAAAABkARQnAQ' height=150 alt='' /><img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*HTasSJGC4koAAAAAAAAAAABkARQnAQ' height=150 alt='' />
 
-> 强大的动画及交互
+<img src="https://user-images.githubusercontent.com/6113694/44995293-02858600-afd5-11e8-840c-349e4730d63d.gif" height=150 alt='' /><img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*I9OdTbXJIi0AAAAAAAAAAABkARQnAQ" height=150 alt='' /><img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*xoufSYcjK2AAAAAAAAAAAABkARQnAQ" height=150 alt='' />
 
-<img src="https://user-images.githubusercontent.com/6113694/44995293-02858600-afd5-11e8-840c-349e4730d63d.gif" height=150 alt='' /><img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*I9OdTbXJIi0AAAAAAAAAAABkARQnAQ" height=150 alt='' /><img src="https://user-images.githubusercontent.com/6113694/44995332-2ba61680-afd5-11e8-8cab-db0e9d08ceb7.gif" height=150 alt='' />
+## Features
 
-<img src="https://gw.alipayobjects.com/zos/rmsportal/HQxYguinFOMIXrGQOABY.gif" height=150><img src="https://gw.alipayobjects.com/zos/rmsportal/nAugyFgrbrUWPmDIDiQm.gif" height=150 alt='' /><img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*xoufSYcjK2AAAAAAAAAAAABkARQnAQ" height=150 alt='' />
+- Abundant Built-in Items: Nodes and edges with free configurations;
+- Steerable Interactions: More than 10 basic interaction behaviors ;
+- Powerful Layout: More than 10 layout algorithms;
+- Convenient Components: Outstanding ability and performance;
+- Friendly User Experience: Complete documents for different levels of user requirements. TypeScript supported.
 
-> 强大的布局
+G6 concentrates on the principle of 'good by default'. In addition, the custom mechanism of the item, interation behavior, and layout satisfies the customazation requirements.
 
-## G6 的特性
+<img src='https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*V0a9SoDnLHwAAAAAAAAAAAAADmJ7AQ/original' width=1000 alt='' />
 
-G6 作为一款专业的图可视化引擎，具有以下特性：
+> Abundant Built-in Items
 
-- 丰富的元素：内置丰富的节点与边元素，自由配置，支持自定义；
-- 可控的交互：内置 10+ 交互行为，支持自定义交互；
-- 强大的布局：内置了 10+ 常用的图布局，支持自定义布局；
-- 便捷的组件：优化内置组件功能及性能；
-- 友好的体验：根据用户需求分层梳理文档，支持 TypeScript 类型推断。
-
-除了默认好用、配置自由的内置功能，元素、交互、布局均具有高可扩展的自定义机制。
-
-<img src='https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*Y0c6S7cxjVkAAAAAAAAAAABkARQnAQ' width=800 height=200 alt='' />
-
-> 丰富的图元素
-
-## 安装
+## Installation
 
 ```bash
 $ npm install @antv/g6
 ```
 
-## 使用
+## Usage
 
 <img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*khbvSrptr0kAAAAAAAAAAABkARQnAQ" width=437 height=148 alt='' />
 
@@ -110,18 +110,19 @@ graph.render();
 
 [![Edit compassionate-lalande-5lxm7](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/compassionate-lalande-5lxm7?fontsize=14&hidenavigation=1&theme=dark)
 
-更多关于 G6 使用的问题，请参考[快速上手](https://g6.antv.antgroup.com/manual/getting-started)。
+For more information of the usage, please refer to [Getting Started](https://g6.antv.antgroup.com/en/manual/getting-started).
 
-## 开发
+## Development
 
 ```bash
-$ npm install
+# install dependencies (with pnpm)
+pnpm install
 
-# lerna bootstrap for multiple packages
-$ npm run bootstrap
+# build
+pnpm build
 
-# build the packages
-$ npm run build:all
+# start the dev server
+pnpm start
 
 # if you wanna watch one of the packages, e.g. packages/core
 $ cd ./packages/core
@@ -135,48 +136,31 @@ npm test -- --watch ./tests/unit/algorithm/find-path-spec
 DEBUG_MODE=1 npm test -- --watch ./tests/unit/algorithm/find-path-spec
 ```
 
-## 文档
+## Documents
 
-- <a href='https://g6.antv.antgroup.com/manual/tutorial/preface' target='_blank'>入门教程</a>
-- <a href='https://g6.antv.antgroup.com/manual/middle/overview' target='_blank'>核心概念</a>
-- <a href='https://g6.antv.antgroup.com/manual/advanced/coordinate-system' target='_blank'>扩展阅读</a>
-- <a href='https://g6.antv.antgroup.com/api/graph' target='_blank'>API</a>
+- <a href='https://g6.antv.antgroup.com/en/manual/tutorial/preface' target='_blank'>Tutorial</a>
+- <a href='https://g6.antv.antgroup.com/en/manual/middle/overview' target='_blank'>Middle Guides</a>
+- <a href='https://g6.antv.antgroup.com/en/manual/advanced/coordinate-system' target='_blank'>Further Reading</a>
+- <a href='https://g6.antv.antgroup.com/en/api/graph' target='_blank'>API Reference</a>
 
-## React 项目集成
+## React project integration
 
-针对 React 项目集成，我们有一款单独的产品推荐：[Graphin](https://graphin.antv.vision)，它是基于 G6 封装的 React 组件库，专注在关系分析领域，简单高效，开箱即用。
+For React project integration, we have an independent product recommendation: [Graphin](https://graphin.antv.vision), which is a toolkit based on G6 and React, that focuses on relational visual analysis. It's simple, efficient, out of the box.
 
-目前 Graphin 在商业图分析项目中均有良好的实践，具体查看[《谁在使用 Graphin》](https://github.com/antvis/Graphin/issues/212)
+At present, Graphin has good practices in business graph analysis projects. For details, see [《Who uses Graphin》](https://github.com/antvis/Graphin/issues/212)
 
-## 在线分析工具 G6VP
+## G6 Communication Group
 
-如果你有一份关系数据（图数据），想要快速在线进行可视化，并能够高效分析，那么我们推荐使用官方出品的 [G6VP](https://github.com/antvis/G6VP)，它支持本地文件 JSON，Excel，也支持 TuGraph，Neo4J，GraphScope 等图数据源，内置了 60+ 的分析资产，图分析可以像搭积木一样简单。平台还提供一键导出 SDK，快速集成到业务系统中，大大降 低初始研发门槛 与 后续维护成本。
+Welcome to join the **G6 Communication Group**. We also welcome the github issues.
 
-![G6VP Image](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*GOVySaZ1iHYAAAAAAAAAAAAADmJ7AQ/original)
+* DingTalk Group: 30088652
+* WeChat Group: Add WeChat **AntVG6** to join the group
 
-## G6 图可视化交流群
+<img src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*j137TJmS1dEAAAAAAAAAAAAADmJ7AQ/original" width="200" />
 
-欢迎各界 G6 使用者、图可视化爱好者加入 **G6 图可视化交流群** 及 **G6 图可视化交流二群**（钉钉群，使用钉钉扫一扫加入）讨论与交流。Graphin 的使用者，爱好者请加入 **Graphin's Group Chat**
+## How to Contribute
 
-> **G6 图可视化交流群** 已满员，该群会不定期移除不活跃的成员。
-
-> 由于维护精力有限，**G6 图可视化交流群** 仅供社区同学相互交流，不进行答疑。欢迎对 G6 感兴趣的同学加入到答疑中来，非常感谢！
-
-<p >
-  <a href="https://mdn.alipayobjects.com/mdn/huamei_qa8qxu/afts/img/A*yCTQR78ipZEAAAAAAAAAAAAADmJ7AQ" >
-    <img src='https://mdn.alipayobjects.com/mdn/huamei_qa8qxu/afts/img/A*yCTQR78ipZEAAAAAAAAAAAAADmJ7AQ' style='width:250px;display:inline-block;vertical-align:top;' alt='' />
-  </a>
-  <a href="https://mdn.alipayobjects.com/mdn/huamei_qa8qxu/afts/img/A*WVxyRpjxrEMAAAAAAAAAAAAADmJ7AQ" >
-    <img src='https://mdn.alipayobjects.com/mdn/huamei_qa8qxu/afts/img/A*WVxyRpjxrEMAAAAAAAAAAAAADmJ7AQ' style='width:250px;display:inline-block;vertical-align:top;' alt='' />
-  </a>
-  <a href="https://graphin.antv.vision/" >
-   <img src='https://camo.githubusercontent.com/5e6624abcdde991f9fd89fce4933ad133a48d8fb603d1852c670da329df73ef7/68747470733a2f2f67772e616c697061796f626a656374732e636f6d2f6d646e2f726d735f3430326331612f616674732f696d672f412a2d717a6f54704c672d3163414141414141414141414141414152516e4151' style='width:250px;display:inline-block;vertical-align: top;' alt='' />
-  </a>
-</p>
-
-## 如何贡献
-
-请让我们知道您要解决或贡献什么，所以在贡献之前请先提交 [issues](https://github.com/antvis/g6/issues) 描述 bug 或建议。
+Please let us know what you are you going to help. Do check out [issues](https://github.com/antvis/g6/issues) for bug reports or suggestions first.
 
 ## License
 

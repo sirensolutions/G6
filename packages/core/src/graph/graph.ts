@@ -1745,8 +1745,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
 
     this.set({ nodes: items.nodes, edges: items.edges });
 
+    const { relayoutAtChangeData = true } = this.get('layout') || {};
     const layoutController = this.get('layoutController');
-    if (layoutController) {
+    if (relayoutAtChangeData && layoutController) {
       layoutController.changeData(() => {
         setTimeout(() => {
           self.getCombos()?.forEach(combo => {
@@ -1933,6 +1934,10 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     if (!comboItem.getModel().parentId && comboItem.getChildren().combos.length) {
       this.updateComboTree(comboItem, undefined, false);
     }
+
+    setTimeout(() => {
+      comboItem.set('animate', true);
+    }, 0);
   }
 
   /**
@@ -2743,7 +2748,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       console.warn('The combo to be collapsed does not exist!');
       return;
     }
-    this.emit('beforecollapseexpandcombo', { action: 'expand', item: combo });
+    this.emit('beforecollapseexpandcombo', { action: 'collapse', item: combo });
 
     const comboModel = combo.getModel();
 
@@ -2781,8 +2786,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     edges.forEach(edge => {
       const { isVEdge, size = 1 } = edge.getModel();
       if (edge.isVisible() && !isVEdge) return;
-      let source = edge.getSource();
-      let target = edge.getTarget();
+      const source = edge.getSource();
+      const target = edge.getTarget();
       let otherEnd = null;
       let otherEndIsSource;
       if (source.getModel().id === comboModel.id ||
@@ -2890,10 +2895,10 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const addedVEdgeMap = {};
     edges.forEach(edge => {
       if (edge.isVisible() && !edge.getModel().isVEdge) return;
-      let source = edge.getSource();
-      let target = edge.getTarget();
-      let sourceId = source.get('id');
-      let targetId = target.get('id');
+      const source = edge.getSource();
+      const target = edge.getTarget();
+      const sourceId = source.get('id');
+      const targetId = target.get('id');
       let otherEnd = null;
       let otherEndIsSource;
       if (sourceId === comboModel.id ||
@@ -3243,6 +3248,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
    * 销毁画布
    */
   public destroy() {
+    this.emit('beforedestroy');
+
     this.clear();
 
     // 清空栈数据
@@ -3258,6 +3265,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     this.destroyed = true;
     this.redoStack = null;
     this.undoStack = null;
+
+    this.emit('afterdestroy');
   }
 
   /**

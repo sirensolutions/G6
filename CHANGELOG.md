@@ -1,5 +1,48 @@
 # ChangeLog
 
+### 4.8.23
+
+- feat: brush-select supports selecting inside a combo with a configuration;
+- feat: activate-relations supports dehighlight a node by second clicking;
+- fix: simple timeline with invalid highlight fill problem, closes: #5049;
+
+### 4.8.22
+
+- fix: read and clone large data for tree graph;
+- fix: download images with correct file name;
+
+### 4.8.21
+
+- feat: layout supports relayoutAtChangeData config to disable relayout while changeData of graph is called;
+
+### 4.8.20
+
+- fix: parent combo size problem, closes: #4734;
+
+### 4.8.19
+
+- fix: custom node with image shape, setting state makes the image lost, closes: #4707;
+- feat: timing event for graph destroy;
+
+### 4.8.17
+
+- fix: scroll delta for old version of firefox;
+
+### 4.8.16
+
+- fix: edge label is not draggable, closes: #4612;
+- fix: error occurs while clicking back button on timebar when the slider is already on the start, closes: #4598;
+- docs: scrollNode demo drag node problem, closes: #4626;
+
+### 4.8.15
+
+- fix: layout umd url with fixed version instead of latest version;
+- fix: combo animate is not activated with createCombo;
+
+### 4.8.14
+
+- fix: upgrade layout for umd;
+
 ### 4.8.13
 
 - fix: webpack dependency;

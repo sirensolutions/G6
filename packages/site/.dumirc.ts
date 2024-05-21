@@ -1,13 +1,13 @@
-import fs from 'fs'
-import path from 'path'
-import { defineConfig } from 'dumi';
-import { repository, version } from './package.json';
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
+import { defineConfig } from 'dumi';
+import fs from 'fs';
+import path from 'path';
+import { repository, version } from './package.json';
 
 const getExtraLib = () => {
   try {
     const extractorConfig = ExtractorConfig.loadFileAndPrepare(
-      path.resolve('./api-extractor.json'),
+      path.resolve('./api-extractor.json')
     );
     const extractorResult = Extractor.invoke(extractorConfig, {
       localBuild: true,
@@ -29,36 +29,48 @@ const getExtraLib = () => {
 };
 
 export default defineConfig({
-  locales: [{ id: 'zh', name: '中文' }, { id: 'en', name: 'English' }],
-  title: 'G6',                                                          // 网站header标题
-  favicons: ['https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*7svFR6wkPMoAAAAAAAAAAAAADmJ7AQ/original'], // 网站 favicon
-  metas: [                                                              // 自定义 meta 标签  
+  locales: [
+    { id: 'zh', name: '中文' },
+    { id: 'en', name: 'English' },
+  ],
+  title: 'G6', // 网站header标题
+  favicons: [
+    'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*7svFR6wkPMoAAAAAAAAAAAAADmJ7AQ/original',
+  ], // 网站 favicon
+  metas: [
+    // 自定义 meta 标签
     { name: 'keywords', content: 'G6' },
-    { name: 'description', content: 'A collection of charts made with the Grammar of Graphics' },
+    {
+      name: 'description',
+      content: 'A collection of charts made with the Grammar of Graphics',
+    },
   ],
   themeConfig: {
     title: 'G6',
     description: 'A collection of charts made with the Grammar of Graphics',
-    defaultLanguage: 'zh',                                              // 默认语言
-    isAntVSite: false,                                                  // 是否是 AntV 的大官网
-    siteUrl: 'https://antv.antgroup.com',                               // 官网地址
-    githubUrl: repository.url,                                          // GitHub 地址
-    showSearch: true,                                                   // 是否显示搜索框
-    showGithubCorner: true,                                             // 是否显示头部的 GitHub icon
-    showGithubStars: true,                                              // 是否显示 GitHub star 数量
-    showAntVProductsCard: true,                                         // 是否显示 AntV 产品汇总的卡片
-    showLanguageSwitcher: true,                                         // 是否显示官网语言切换
-    showWxQrcode: true,                                                 // 是否显示头部菜单的微信公众号
-    showChartResize: true,                                              // 是否在 demo 页展示图表视图切换
-    showAPIDoc: true,                                                   // 是否在 demo 页展示API文档
+    defaultLanguage: 'zh', // 默认语言
+    isAntVSite: false, // 是否是 AntV 的大官网
+    siteUrl: 'https://antv.antgroup.com', // 官网地址
+    githubUrl: repository.url, // GitHub 地址
+    footerTheme: 'light', // 白色 底部主题
+    showSearch: true, // 是否显示搜索框
+    showGithubCorner: true, // 是否显示头部的 GitHub icon
+    showGithubStars: true, // 是否显示 GitHub star 数量
+    showAntVProductsCard: true, // 是否显示 AntV 产品汇总的卡片
+    showLanguageSwitcher: true, // 是否显示官网语言切换
+    showWxQrcode: true, // 是否显示头部菜单的微信公众号
+    showChartResize: true, // 是否在 demo 页展示图表视图切换
+    showAPIDoc: true, // 是否在 demo 页展示API文档
     themeSwitcher: 'g2',
-    versions: {                                                         // 历史版本以及切换下拉菜单
+    versions: {
+      // 历史版本以及切换下拉菜单
       [version]: 'https://g6.antv.antgroup.com',
+      '5.x': 'https://g6-next.antv.antgroup.com',
       '3.2.x': 'https://g6-v3-2.antv.vision',
     },
     docsearchOptions: {
       versionV3: true,
-      appId: 'B46SY3F3DL',                                   // 头部搜索框配置
+      appId: 'B46SY3F3DL', // 头部搜索框配置
       apiKey: '16ee95cbade255d2121507328f3b3c6d',
       indexName: 'g6-antv-antgroup',
     },
@@ -92,19 +104,19 @@ export default defineConfig({
         dropdownItems: [
           {
             name: {
-              zh: 'Graphinsight',
-              en: 'Graphinsight'
+              zh: 'G6VP',
+              en: 'G6VP',
             },
-            url: 'https://graphinsight.antgroup.com/#/workspace'
+            url: 'https://insight.antv.antgroup.com',
           },
           {
             name: {
               zh: 'GraphMaker',
-              en: 'GraphMaker'
+              en: 'GraphMaker',
             },
-            url: 'https://render.mybank.cn/p/c/17sfi50vhu80#/home'
+            url: 'https://render.mybank.cn/p/c/17sfi50vhu80#/home',
           },
-        ]
+        ],
       },
       {
         slug: 'examples',
@@ -121,8 +133,8 @@ export default defineConfig({
         },
       },
     ],
-    ecosystems: [                                                       // 头部的菜单中的「周边生态」
-
+    ecosystems: [
+      // 头部的菜单中的「周边生态」
     ],
     docs: [
       // ===========Design===================
@@ -416,16 +428,31 @@ export default defineConfig({
     },
     /** 首页技术栈介绍 */
     detail: {
+      engine: {
+        zh: 'G6',
+        en: 'G6',
+      },
       title: {
-        zh: 'G6 图可视化引擎',
-        en: 'G6 Graph Visualization Engine',
+        zh: 'G6·图可视化引擎',
+        en: 'G6·Graph Visualization Engine',
       },
       description: {
         zh: 'G6 是一个简单、易用、完备的图可视化引擎，它在高定制能力的基础上，提供了一系列设计优雅、便于使用的图可视化解决方案。能帮助开发者搭建属于自己的图可视化、图分析、或图编辑器应用。',
-        en: 'G6 is graph visualization engine with simplicity and convenience. Based on the ability of customize, it provides a set of elegant graph visualization solutions, and helps developers to build up applications for graph visualization, graph analysis, and graph editor.'
+        en: 'G6 is graph visualization engine with simplicity and convenience. Based on the ability of customize, it provides a set of elegant graph visualization solutions, and helps developers to build up applications for graph visualization, graph analysis, and graph editor.',
       },
-      image: 'https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*j5AqSpmNPdYAAAAAAAAAAABkARQnAQ',
+      image:
+        'https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*6dSUSo3QTk0AAAAAAAAAAAAADmJ7AQ/original',
+      imageStyle: {
+        transform: 'scale(0.6)',
+      },
       buttons: [
+        {
+          text: {
+            zh: 'V5 DEMO',
+            en: 'V5 DEMO',
+          },
+          link: `/g6v5`,
+        },
         {
           text: {
             zh: '图表示例',
@@ -451,11 +478,11 @@ export default defineConfig({
           en: 'News',
         },
         title: {
-          zh: '图可视分析与搭建平台 GraphInsight 开源',
-          en: 'GraphInsight is opened source!',
+          zh: 'G6 5.0-beta 闪亮登场',
+          en: 'G6 5.0-beta is released!',
         },
-        date: '2022.11.22',
-        link: 'https://www.yuque.com/antv/blog/nyl5bkhdkicgm7v8',
+        date: '2023.08.31',
+        link: 'https://zhuanlan.zhihu.com/p/653709725?',
       },
       {
         type: {
@@ -463,11 +490,11 @@ export default defineConfig({
           en: 'News',
         },
         title: {
-          zh: 'G6 5.0 插件机制与引擎性能蓄势待发',
-          en: 'G6 5.0: extension mechanism and better performance',
+          zh: '图可视分析与搭建平台 GraphInsight 开源',
+          en: 'GraphInsight is opened source!',
         },
         date: '2022.11.22',
-        link: 'https://www.yuque.com/antv/blog/fm6setn8p9m9lmh5',
+        link: 'https://www.yuque.com/antv/blog/nyl5bkhdkicgm7v8',
       },
     ],
     /** 首页特性介绍 */
@@ -480,7 +507,7 @@ export default defineConfig({
         },
         description: {
           zh: 'G6 是一个专注于关系数据的、完备的图可视化引擎',
-          en: 'G6 is a complete graph visualization engine, which focuses on relational data'
+          en: 'G6 is a complete graph visualization engine, which focuses on relational data',
         },
       },
       {
@@ -502,8 +529,8 @@ export default defineConfig({
         },
         description: {
           zh: 'Vivid, 精心设计的简单、灵活、高可拓展的接口，满足你的无限创意',
-          en: 'Well-designed simple, flexible, and extendable intefaces will satisfy your infinite originality'
-        }
+          en: 'Well-designed simple, flexible, and extendable intefaces will satisfy your infinite originality',
+        },
       },
     ],
     /** 首页案例 */
@@ -516,7 +543,7 @@ export default defineConfig({
         },
         description: {
           zh: 'Graphin 是一款基于 G6 封装的 React 分析组件库，专注在关系可视分析领域，简单高效，开箱即用。',
-          en: "Graphin stands for Graph Insight. It's a toolkit based on G6 and React, that focuses on relational visual analysis.It's simple, efficient, out of the box."
+          en: "Graphin stands for Graph Insight. It's a toolkit based on G6 and React, that focuses on relational visual analysis.It's simple, efficient, out of the box.",
         },
         link: `https://graphin.antv.vision`,
         image:
@@ -530,7 +557,7 @@ export default defineConfig({
         },
         description: {
           zh: '基于 G6 实现的动态决策树，辅助用户寻找合适的可视化方式。它展示了 G6 强大的自定义节点和动画的能力。',
-          en: 'It is an interactive graph for users to find out an appropriate visualization method for their requirements. The demo shows the powerful custom node and animation ability of G6.'
+          en: 'It is an interactive graph for users to find out an appropriate visualization method for their requirements. The demo shows the powerful custom node and animation ability of G6.',
         },
         link: `/examples/case/graphDemos/#decisionBubbles`,
         image:
@@ -544,7 +571,7 @@ export default defineConfig({
         },
         description: {
           zh: '社交网络分析是图可视化中一个重要的应用场景。随着社交网络越来越流行，人与人、人与组织之间的关系变得越来越复杂，使用传统的分析手段，已经很难满足我们的分析需求。在这种情况下，图分析及图可视化显得愈发重要。',
-          en: 'Social network is an important scenario in graph visualization. The relationships become complicate with the development of social network. Graph visualization and analysis do well on these complex cases.'
+          en: 'Social network is an important scenario in graph visualization. The relationships become complicate with the development of social network. Graph visualization and analysis do well on these complex cases.',
         },
         link: `/manual/cases/relations`,
         image:
@@ -558,7 +585,7 @@ export default defineConfig({
         },
         description: {
           zh: '基于 G6 的关系时序分析应用，解决应急过程中流程、影响面、应急预案等一系列应急决策辅助信息和手段，快速止血以减少和避免故障升级。',
-          en: 'This is an application for dynamic relationships analysis based on G6, which helps people deal with the flow, influence, and find out solutions to avoid losses and faults.'
+          en: 'This is an application for dynamic relationships analysis based on G6, which helps people deal with the flow, influence, and find out solutions to avoid losses and faults.',
         },
         link: `/manual/cases/sequenceTime`,
         image:
@@ -567,14 +594,38 @@ export default defineConfig({
     ],
     /** 首页合作公司 */
     companies: [
-      { name: '阿里云', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*V_xMRIvw2iwAAAAAAAAAAABkARQnAQ' },
-      { name: '支付宝', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*lYDrRZvcvD4AAAAAAAAAAABkARQnAQ', },
-      { name: '天猫', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*BQrxRK6oemMAAAAAAAAAAABkARQnAQ', },
-      { name: '淘宝网', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*1l8-TqUr7UcAAAAAAAAAAABkARQnAQ', },
-      { name: '网上银行', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*ZAKFQJ5Bz4MAAAAAAAAAAABkARQnAQ', },
-      { name: '京东', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*yh-HRr3hCpgAAAAAAAAAAABkARQnAQ', },
-      { name: 'yunos', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*_js7SaNosUwAAAAAAAAAAABkARQnAQ', },
-      { name: '菜鸟', img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*TgV-RZDODJIAAAAAAAAAAABkARQnAQ', },
+      {
+        name: '阿里云',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*V_xMRIvw2iwAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '支付宝',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*lYDrRZvcvD4AAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '天猫',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*BQrxRK6oemMAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '淘宝网',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*1l8-TqUr7UcAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '网上银行',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*ZAKFQJ5Bz4MAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '京东',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*yh-HRr3hCpgAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: 'yunos',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*_js7SaNosUwAAAAAAAAAAABkARQnAQ',
+      },
+      {
+        name: '菜鸟',
+        img: 'https://gw.alipayobjects.com/mdn/rms_2274c3/afts/img/A*TgV-RZDODJIAAAAAAAAAAABkARQnAQ',
+      },
     ],
     internalSite: {
       url: 'https://g6.antv.antgroup.com',
@@ -585,12 +636,18 @@ export default defineConfig({
     },
   },
   mfsu: false,
-  alias: {
-    '@': __dirname
+  analytics: {
+    // google analytics 的 key (GA 4)
+    ga_v2: 'G-YLQBGDK1GT',
+    // 若你在使用 GA v1 旧版本，请使用 `ga` 来配置
+    // ga: 'UA-148148901-4',
+    // 百度统计的 key
+    // baidu: 'baidu_tongji_key',
   },
-  links: [
-  ],
-  scripts: [
-  ],
+  alias: {
+    '@': __dirname,
+  },
+  links: [],
+  scripts: [],
   jsMinifier: 'terser',
 });
