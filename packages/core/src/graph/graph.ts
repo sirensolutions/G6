@@ -1602,8 +1602,10 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const self = this;
     let item: INode;
     const itemMap: NodeMap = this.get('itemMap');
+    const itemsArray = (items as { [key: string]: any[] })[`${type}s`];
+    const itemsToAdd: { type: ITEM_TYPE; model: NodeConfig | EdgeConfig }[] = [];
 
-    each(models, model => {
+    each(models, (model: NodeConfig | EdgeConfig) => {
       item = itemMap[model.id];
       if (item) {
         if (self.get('animate') && type === NODE) {
@@ -1617,13 +1619,23 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
 
         self.updateItem(item, model, false);
       } else {
-        item = self.addItem(type, model, false) as any;
+        itemsToAdd.push({ type, model });
       }
 
       if (item) {
-        (items as { [key: string]: any[] })[`${type}s`].push(item);
+        itemsArray.push(item);
       }
     });
+
+    if (itemsToAdd.length) {
+      const items = self.addItems(itemsToAdd, false);
+      for (var i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item) {
+          itemsArray.push(item);
+        }
+      }
+    }
   }
 
   /**
