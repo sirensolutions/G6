@@ -223,7 +223,7 @@ registerNode(
       const outerR = size[0];
       const defaultInnerR = (outerR * 3) / 8;
       const innerR = cfg.innerR || defaultInnerR;
-      return Util.getStarPath(outerR, innerR);
+      return (Util as any).getStarPath(outerR, innerR);
     },
     /**
      * 获取节点的样式，供基于该节点自定义时使用

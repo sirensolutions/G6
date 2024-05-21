@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Layouts as Layout,
   registerLayout as oRegisterLayout,

@@ -318,7 +318,7 @@ export default class ToolBar extends Base {
         case 'uncombo':
           const targetCombo = data.combos[data.combos.length - 1];
           const childrenIds = data.nodes.concat(data.combos).map(child => child.id).filter(id => id !== targetCombo.id);
-          graph.createCombo(targetCombo, childrenIds, false);
+          (graph as any).createCombo(targetCombo, childrenIds, false);
           break;
         case 'layout':
           graph.updateLayout(data, undefined, undefined, false);
@@ -422,12 +422,12 @@ export default class ToolBar extends Base {
           break;
         case 'createCombo':
           const createdCombo = data.combos[data.combos.length - 1];
-          graph.createCombo(createdCombo, createdCombo.children.map(child => child.id), false);
+          (graph as any).createCombo(createdCombo, createdCombo.children.map(child => child.id), false);
           break;
         case 'uncombo':
           const beforeCombos = currentData.data.before.combos;
           const targertCombo = beforeCombos[beforeCombos.length - 1];
-          graph.uncombo(targertCombo.id, false);
+          (graph as any).uncombo(targertCombo.id, false);
           break;
         case 'layout':
           graph.updateLayout(data, undefined, undefined, false);

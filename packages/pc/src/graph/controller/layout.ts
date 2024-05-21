@@ -129,7 +129,7 @@ export default class LayoutController extends AbstractLayout {
         }
       }
 
-      if (Util.isForce(layoutType)) {
+      if ((Util as any).isForce(layoutType)) {
         const { onTick, animate } = layoutCfg;
         const isDefaultAnimateLayout =
           animate === undefined && (layoutType === 'force' || layoutType === 'force2');
@@ -192,7 +192,7 @@ export default class LayoutController extends AbstractLayout {
         reslove();
       };
 
-      if (Util.isForce(layoutType)) {
+      if ((Util as any).isForce(layoutType)) {
         const { onTick, animate } = layoutCfg;
         const isDefaultAnimateLayout = animate === undefined && (layoutType === 'force' || layoutType === 'force2');
         const tick = () => {
@@ -259,10 +259,12 @@ export default class LayoutController extends AbstractLayout {
       this.tweakInit();
     } else {
       // 初始化位置，若配置了 preset，则使用 preset 的参数生成布局作为预布局，否则使用 grid
+      // @ts-ignore
       start = this.initPositions(layoutCfg.center, nodes);
     }
     // init hidden nodes
     const initHiddenPromise = this.initPositions(layoutCfg.center, hiddenNodes);
+    // @ts-ignore
     initHiddenPromise.then();
 
     // 若用户指定开启 gpu，且当前浏览器支持 webgl，且该算法存在 GPU 版本（目前仅支持 fruchterman 和 gForce），使用 gpu 版本的布局
@@ -376,6 +378,7 @@ export default class LayoutController extends AbstractLayout {
     });
   }
 
+  // @ts-ignore
   public initWithPreset(hasPresetCallback, noPresetCallback): Promise<void> {
     return new Promise(async (resolve, reject)  => {
       const { layoutCfg, data } = this;

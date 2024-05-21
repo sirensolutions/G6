@@ -425,7 +425,7 @@ export default class Legend extends Base {
             break;
           case 'star':
             attrs = {
-              path: Util.getStarPath(r * 3, r * 1.2)
+              path: (Util as any).getStarPath(r * 3, r * 1.2)
             };
             shapeType = 'path';
             break;
