@@ -1602,7 +1602,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const self = this;
     let item: INode;
     const itemMap: NodeMap = this.get('itemMap');
-    const itemsArray = (items as { [key: string]: any[] })[`${type}s`];
+    const itemsArray = items[`${type}s`];
     const itemsToAdd: { type: ITEM_TYPE; model: NodeConfig | EdgeConfig }[] = [];
 
     each(models, (model: NodeConfig | EdgeConfig) => {
