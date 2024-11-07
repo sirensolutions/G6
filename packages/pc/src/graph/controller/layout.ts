@@ -357,12 +357,12 @@ export default class LayoutController extends AbstractLayout {
       if (!sourcePosition && targetPosition) {
         positionMap[source] = {
           x: targetPosition.x + (Math.random() - 0.5) * 80,
-          y: targetPosition.y + (Math.random() - 0.5) * 80,
+          y: targetPosition.y + (Math.random() - 0.5) * 80
         };
       } else if (!targetPosition && sourcePosition) {
         positionMap[target] = {
           x: sourcePosition.x + (Math.random() - 0.5) * 80,
-          y: sourcePosition.y + (Math.random() - 0.5) * 80,
+          y: sourcePosition.y + (Math.random() - 0.5) * 80
         };
       }
     });
