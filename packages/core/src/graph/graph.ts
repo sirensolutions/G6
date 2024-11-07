@@ -2846,6 +2846,12 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         if (addedVEdgeMap[key]) {
           addedVEdgeMap[key].size += size;
           return;
+        } else {
+          const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
+          if (addedVEdgeMap[inverseKey]) {
+            addedVEdgeMap[inverseKey].size += size;
+            return;
+          }
         }
         addedVEdgeMap[key] = vEdgeInfo;
       }
