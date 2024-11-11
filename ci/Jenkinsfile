@@ -6,7 +6,7 @@ pipeline {
   agent {
     kubernetes {
       cloud getKubernetesClusterName()
-      yaml readK8sConfig('build', '2Gi', '1')
+      yaml readK8sConfig('build', '4Gi', '2')
     }
   }
 
