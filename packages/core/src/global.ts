@@ -252,6 +252,6 @@ export default {
   windowFontFamily:
     typeof window !== 'undefined' && window.getComputedStyle && document.body
       ? window.getComputedStyle(document.body, null).getPropertyValue('font-family') ||
-      'Arial, sans-serif'
+        'Arial, sans-serif'
       : 'Arial, sans-serif',
 };

@@ -5,6 +5,7 @@
     "packages/*"
   ],
   "scripts": {
+    "auth": "yarn config set --home 'npmRegistries[\"https://europe-west1-npm.pkg.dev/siren-cicd/npm-virtual/\"].npmAuthToken' $(gcloud auth print-access-token) && yarn config set --home 'npmRegistries[\"https://europe-west1-npm.pkg.dev/siren-cicd/npm-standard/\"].npmAuthToken' $(gcloud auth print-access-token)",
     "build:demos": "cd ./packages/pc && npm run demos",
     "build:site": "cd ./packages/site && npm run site:build",
     "build:core": "cd ./packages/core && npm run build",
