@@ -8,6 +8,22 @@
 
 [![build](https://github.com/antvis/G6/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/antvis/G6/actions/) [![Coverage Status](https://coveralls.io/repos/github/antvis/G6/badge.svg?branch=master)](https://coveralls.io/github/antvis/G6?branch=master) ![typescript](https://img.shields.io/badge/language-typescript-red.svg) ![MIT](https://img.shields.io/badge/license-MIT-000000.svg) [![npm package](https://img.shields.io/npm/v/@antv/g6.svg)](https://www.npmjs.com/package/@antv/g6) [![NPM downloads](http://img.shields.io/npm/dm/@antv/g6.svg)](https://npmjs.org/package/@antv/g6) [![Percentage of issues still open](http://isitmaintained.com/badge/open/antvis/g6.svg)](http://isitmaintained.com/project/antvis/g6)
 
+## Contributing
+
+To set up the repo, run the following commands:
+
+```shell
+yarn
+```
+
+To publish, run the following commands for the package you want to publish (`core`, `element`, `plugin`, `pc`, `g6`):
+
+```shell
+yarn build:all
+cd packages/core # Or: element, plugin, pc, g6
+yarn npm publish
+```
+
 ## What is G6
 
 [G6](https://github.com/antvis/g6) is a graph visualization engine, which provides a set of basic mechanisms, including rendering, layout, analysis, interaction, animation, and other auxiliary tools. G6 aims to simplify the relationships, and help people to obtain the insight of relational data. Developers are able to build graph visualization **analysis** applications or graph visualization **modeling** applications easily.
