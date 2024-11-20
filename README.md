@@ -13,7 +13,6 @@
 To set up the repo, run the following commands:
 
 ```shell
-npm run auth
 yarn
 yarn bootstrap
 ```
@@ -22,7 +21,6 @@ To publish, run the following commands for the package you want to publish (`cor
 
 ```shell
 npm run build:all
-yarn auth
 cd packages/core # Or: element, plugin, pc, g6
 yarn npm publish
 ```
