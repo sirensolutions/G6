@@ -14,13 +14,12 @@ To set up the repo, run the following commands:
 
 ```shell
 yarn
-yarn bootstrap
 ```
 
 To publish, run the following commands for the package you want to publish (`core`, `element`, `plugin`, `pc`, `g6`):
 
 ```shell
-npm run build:all
+yarn build:all
 cd packages/core # Or: element, plugin, pc, g6
 yarn npm publish
 ```
