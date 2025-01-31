@@ -85,5 +85,5 @@
     "sharp": "^0.30.4",
     "electron": "23.3.13"
   },
-  "packageManager": "yarn@4.5.1"
+  "packageManager": "yarn@4.6.0"
 }
