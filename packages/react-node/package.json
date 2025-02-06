@@ -1,7 +1,7 @@
 {
   "name": "@antv/g6-react-node",
   "description": "Using React Component to Define Your G6 Graph Node",
-  "version": "1.4.8-siren.2",
+  "version": "1.4.8-siren.3",
   "scripts": {
     "start": "dumi dev",
     "build": "father-build",
@@ -31,7 +31,7 @@
   "dependencies": {
     "@antv/g-base": "^0.5.1",
     "@antv/g-canvas": "^0.5.2",
-    "@antv/g6-core": "0.8.24-siren.2",
+    "@antv/g6-core": "0.8.24-siren.3",
     "@types/yoga-layout": "^1.9.3",
     "react": "^16.12.0",
     "yoga-layout-prebuilt": "^1.10.0"
