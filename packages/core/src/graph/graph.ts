@@ -2747,6 +2747,40 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     }
   }
 
+  private getEdgeDirection(style): 'start' | 'end' | 'both' | 'none' {
+    const startArrowPath = style?.keyshape?.startArrow?.path;
+    const endArrowPath = style?.keyshape?.endArrow?.path;
+    const hasStart = !!startArrowPath && startArrowPath !== '';
+    const hasEnd = !!endArrowPath && endArrowPath !== '';
+    return hasStart && hasEnd ? 'both' : hasStart ? 'start' : hasEnd ? 'end' : 'none';
+  }
+
+  private processEdgeLabels(edgeInfo) {
+    const labelEntries = Object.entries(edgeInfo.labelCounts.labels);
+    const totalCount = edgeInfo.labelCounts.total;
+    const uniqueLabels = labelEntries.filter(([label]) => label !== '');
+    const allSameLabel = uniqueLabels.length === 1 && uniqueLabels[0][1] === totalCount;
+
+    edgeInfo.style.label.value = allSameLabel
+      ? `${uniqueLabels[0][0]} (${totalCount})`
+      : `(${totalCount})`;
+  }
+
+  private setArrowDirections(edgeInfo) {
+    if (!edgeInfo.consistentDirection) {
+      edgeInfo.style.keyshape.startArrow = null;
+      edgeInfo.style.keyshape.endArrow = null;
+    } else {
+      const { direction } = edgeInfo;
+      edgeInfo.style.keyshape.startArrow = (direction === 'start' || direction === 'both')
+        ? edgeInfo.startArrow
+        : null;
+      edgeInfo.style.keyshape.endArrow = (direction === 'end' || direction === 'both')
+        ? edgeInfo.endArrow
+        : null;
+    }
+  }
+
   /**
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
@@ -2821,6 +2855,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           return;
         }
         let otherEndModel = otherEnd.getModel();
+        const edgeModel = edge.getModel();
+        const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+        const { style } = edgeModel;
+        const edgeDirection = this.getEdgeDirection(style);
+
         while (!otherEnd.isVisible()) {
           const { parentId: otherEndPId, comboId: otherEndCId } = otherEndModel;
           const otherEndParentId = otherEndPId || otherEndCId;
@@ -2843,20 +2882,62 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           isVEdge: true,
         };
         const key = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
-        if (addedVEdgeMap[key]) {
-          addedVEdgeMap[key].size += size;
-          return;
-        } else {
-          const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
-          if (addedVEdgeMap[inverseKey]) {
-            addedVEdgeMap[inverseKey].size += size;
-            return;
-          }
+        const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
+        let currentKey = key;
+        let adjustedDirection = edgeDirection;
+
+        if (!addedVEdgeMap[key] && addedVEdgeMap[inverseKey]) {
+          currentKey = inverseKey;
+          adjustedDirection = edgeDirection === 'start' ? 'end' :
+            edgeDirection === 'end' ? 'start' : edgeDirection;
         }
-        addedVEdgeMap[key] = vEdgeInfo;
+
+        const startArrow = edgeModel.style?.keyshape?.endArrow
+        const endArrow = edgeModel.style?.keyshape?.startArrow
+
+        if (addedVEdgeMap[currentKey]) {
+          const existing = addedVEdgeMap[currentKey];
+          existing.size += size;
+          existing.labelCounts.total += 1;
+          existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+
+          if (existing.consistentDirection && existing.direction !== adjustedDirection) {
+            existing.consistentDirection = false;
+          }
+        } else if (addedVEdgeMap[inverseKey]) {
+          const existing = addedVEdgeMap[inverseKey];
+          existing.size += size;
+          existing.labelCounts.total += 1;
+          existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+
+          const adjustedInverseDirection = adjustedDirection === 'start' ? 'end' : adjustedDirection === 'end' ? 'start' : adjustedDirection;
+          if (existing.consistentDirection && existing.direction !== adjustedInverseDirection) {
+            existing.consistentDirection = false;
+          }
+        } else {
+          addedVEdgeMap[currentKey] = {
+            ...vEdgeInfo,
+            labelCounts: {
+              total: 1,
+              labels: { [edgeLabel]: 1 }
+            },
+            direction: adjustedDirection,
+            consistentDirection: true,
+            startArrow,
+            endArrow,
+            style: {
+              label: { value: '' },
+              keyshape: { startArrow, endArrow }
+            }
+          };
+        }
       }
     });
 
+    Object.values(addedVEdgeMap).forEach(edgeInfo => {
+      this.processEdgeLabels(edgeInfo);
+      this.setArrowDirections(edgeInfo);
+    });
     // update the width of the virtual edges, which is the sum of merged actual edges
     // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
     this.addItems(
@@ -2945,6 +3026,10 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           this.removeItem(edge, false);
           return;
         }
+        const edgeModel = edge.getModel();
+        const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+        const { style } = edgeModel;
+        const edgeDirection = this.getEdgeDirection(style);
 
         let otherEndModel = otherEnd.getModel();
         // find the nearest visible ancestor
@@ -2989,16 +3074,67 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
             size
           }
           const vedgeId = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
-          // update the width of the virtual edges, which is the sum of merged actual edges
-          // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
-          if (addedVEdgeMap[vedgeId]) {
-            addedVEdgeMap[vedgeId].size += size;
-            return;
+          const inverseVedgeId = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
+
+          let currentKey = vedgeId;
+          let adjustedDirection = edgeDirection;
+
+          if (!addedVEdgeMap[vedgeId] && addedVEdgeMap[inverseVedgeId]) {
+            currentKey = inverseVedgeId;
+            adjustedDirection = edgeDirection === 'start' ? 'end' :
+              edgeDirection === 'end' ? 'start' : edgeDirection;
           }
-          addedVEdgeMap[vedgeId] = vEdgeInfo;
+
+          const startArrow = edgeModel.style?.keyshape?.endArrow
+          const endArrow = edgeModel.style?.keyshape?.startArrow
+
+          if (addedVEdgeMap[currentKey]) {
+            const existing = addedVEdgeMap[currentKey];
+            // update the width of the virtual edges, which is the sum of merged actual edges
+            // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
+            existing.size += size;
+            existing.labelCounts.total += 1;
+            existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+
+            if (existing.consistentDirection && existing.direction !== adjustedDirection) {
+              existing.consistentDirection = false;
+            }
+          } else if (addedVEdgeMap[inverseVedgeId]) {
+            const existing = addedVEdgeMap[inverseVedgeId];
+            existing.size += size;
+            existing.labelCounts.total += 1;
+            existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+
+            const adjustedInverseDirection = adjustedDirection === 'start' ? 'end' : adjustedDirection === 'end' ? 'start' : adjustedDirection;
+            if (existing.consistentDirection && existing.direction !== adjustedInverseDirection) {
+              existing.consistentDirection = false;
+            }
+          } else {
+            addedVEdgeMap[currentKey] = {
+              ...vEdgeInfo,
+              labelCounts: {
+                total: 1,
+                labels: { [edgeLabel]: 1 }
+              },
+              direction: adjustedDirection,
+              consistentDirection: true,
+              startArrow,
+              endArrow,
+              style: {
+                label: { value: '' },
+                keyshape: { startArrow, endArrow }
+              }
+            };
+          }
         }
       }
     });
+
+    Object.values(addedVEdgeMap).forEach(edgeInfo => {
+      this.processEdgeLabels(edgeInfo);
+      this.setArrowDirections(edgeInfo);
+    });
+
     this.addItems(
       Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'vedge', model: edgeInfo as EdgeConfig })),
       false
