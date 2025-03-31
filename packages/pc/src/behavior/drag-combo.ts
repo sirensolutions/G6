@@ -89,6 +89,10 @@ export default {
 
     if (!this.validationCombo(evt)) return;
 
+    if ((item as ICombo).hasLocked()) {
+      return;
+    }
+
     this.targets = [];
 
     // 获取所有选中的 Combo
@@ -111,7 +115,7 @@ export default {
     if (dragCombos.length === 0) {
       this.targets.push(item);
     } else {
-      this.targets = combos;
+      this.targets = combos.filter(combo => !(combo as INode | ICombo).hasLocked());
     }
 
     const beforeDragItems = {
