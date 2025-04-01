@@ -2756,13 +2756,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   }
 
   private processEdgeLabels(edgeInfo) {
-    const labelEntries = Object.entries(edgeInfo.labelCounts.labels);
-    const totalCount = edgeInfo.labelCounts.total;
-    const uniqueLabels = labelEntries.filter(([label]) => label !== '');
-    const allSameLabel = uniqueLabels.length === 1 && uniqueLabels[0][1] === totalCount;
+    const totalCount = edgeInfo.count;
+    const { allSameLabel, firstLabel } = edgeInfo;
 
-    edgeInfo.style.label.value = allSameLabel
-      ? `${uniqueLabels[0][0]} (${totalCount})`
+    edgeInfo.style.label.value = allSameLabel && firstLabel !== ''
+      ? `${firstLabel} (${totalCount})`
       : `(${totalCount})`;
   }
 
@@ -2797,13 +2795,22 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const startArrow = isInverse ? edgeModel.style?.keyshape?.endArrow : edgeModel.style?.keyshape?.startArrow;
     const endArrow = isInverse ? edgeModel.style?.keyshape?.startArrow : edgeModel.style?.keyshape?.endArrow;
 
+    const _processLabel = (existing, label) => {
+      if (existing.firstLabel === undefined) {
+        existing.firstLabel = label;
+        existing.allSameLabel = true;
+      } else if (existing.allSameLabel && existing.firstLabel !== label) {
+        existing.allSameLabel = false;
+      }
+    };
+
     if (addedVEdgeMap[currentKey]) {
       const existing = addedVEdgeMap[currentKey];
       // update the width of the virtual edges, which is the sum of merged actual edges
       // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
       existing.size += size;
-      existing.labelCounts.total += 1;
-      existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+      existing.count += 1;
+      _processLabel(existing, edgeLabel); 
       
       if (existing.consistentDirection && existing.direction !== adjustedDirection) {
         existing.consistentDirection = false;
@@ -2813,8 +2820,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       // update the width of the virtual edges, which is the sum of merged actual edges
       // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
       existing.size += size;
-      existing.labelCounts.total += 1;
-      existing.labelCounts.labels[edgeLabel] = (existing.labelCounts.labels[edgeLabel] || 0) + 1;
+      existing.count += 1;
+      _processLabel(existing, edgeLabel);
 
       const adjustedInverseDirection = adjustedDirection === 'start' ? 'end' : adjustedDirection === 'end' ? 'start' : adjustedDirection;
       if (existing.consistentDirection && existing.direction !== adjustedInverseDirection) {
@@ -2824,10 +2831,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       addedVEdgeMap[currentKey] = {
         ...vEdgeInfo,
         size,
-        labelCounts: {
-          total: 1,
-          labels: { [edgeLabel]: 1 }
-        },
+        count: 1,
+        firstLabel: edgeLabel,
+        allSameLabel: true,
         direction: adjustedDirection,
         consistentDirection: true,
         startArrow,
