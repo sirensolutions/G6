@@ -528,13 +528,15 @@ export interface IAbstractGraph extends EventEmitter {
    * 收起指定的 Combo
    * @param comboId combo ID 或 combo 实例
    */
-  collapseCombo: (combo: string | ICombo, stack?: boolean) => void;
+  // collapseCombo: (combo: string | ICombo, stack?: boolean) => void;
+  collapseCombo: (combo: string | ICombo, stack?: boolean, opts?: {inheritLabelWithDir: boolean, showCount: boolean}) => void;
 
   /**
    * 展开指定的 Combo
    * @param combo combo ID 或 combo 实例
    */
-  expandCombo: (combo: string | ICombo, stack?: boolean) => void;
+  // expandCombo: (combo: string | ICombo, stack?: boolean) => void;
+  expandCombo: (combo: string | ICombo, stack?: boolean, opts?: { inheritLabelWithDir: boolean, showCount: boolean }) => void;
 
   /**
    * 展开或收缩指定的 Combo

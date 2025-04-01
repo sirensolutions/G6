@@ -2810,8 +2810,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
       existing.size += size;
       existing.count += 1;
-      _processLabel(existing, edgeLabel); 
-      
+      _processLabel(existing, edgeLabel);
+
       if (existing.consistentDirection && existing.direction !== adjustedDirection) {
         existing.consistentDirection = false;
       }
@@ -2850,7 +2850,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
    */
-  public collapseCombo(combo: string | ICombo, stack: boolean = true): void {
+  public collapseCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabelWithDir: boolean,
+    showCount: boolean
+  } = {
+    inheritLabelWithDir: true,
+    showCount: true
+  }): void {
     if (this.destroyed) return;
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
@@ -2949,16 +2955,32 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         const key = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
         const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
-        this.updateVEdgeMap(addedVEdgeMap, key, inverseKey, vEdgeInfo,
-          edgeLabel,edgeDirection, size, edgeModel
-        );
+        if (opts.inheritLabelWithDir && opts.showCount) {
+          this.updateVEdgeMap(addedVEdgeMap, key, inverseKey, vEdgeInfo,
+            edgeLabel,edgeDirection, size, edgeModel
+          );
+        }
+        else {
+          if (addedVEdgeMap[key]) {
+            addedVEdgeMap[key].size += size;
+            return;
+          } else {
+            if (addedVEdgeMap[inverseKey]) {
+              addedVEdgeMap[inverseKey].size += size;
+              return;
+            }
+          }
+          addedVEdgeMap[key] = vEdgeInfo;
+        }
       }
     });
 
-    Object.values(addedVEdgeMap).forEach(edgeInfo => {
-      this.processEdgeLabels(edgeInfo);
-      this.setArrowDirections(edgeInfo);
-    });
+    if (opts.inheritLabelWithDir && opts.showCount) {
+      Object.values(addedVEdgeMap).forEach(edgeInfo => {
+        this.processEdgeLabels(edgeInfo);
+        this.setArrowDirections(edgeInfo);
+      });
+    }
     // update the width of the virtual edges, which is the sum of merged actual edges
     // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
     this.addItems(
@@ -2972,7 +2994,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
    * 展开指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
    */
-  public expandCombo(combo: string | ICombo, stack: boolean = true): void {
+  public expandCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabelWithDir: boolean,
+    showCount: boolean
+  } = {
+    inheritLabelWithDir: true,
+    showCount: true
+  }): void {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
     }
@@ -3097,17 +3125,30 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           const vedgeId = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
           const inverseVedgeId = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
-          this.updateVEdgeMap(addedVEdgeMap, vedgeId, inverseVedgeId, vEdgeInfo,
-            edgeLabel,edgeDirection, size, edgeModel
-          );
+          if (opts.inheritLabelWithDir && opts.showCount) {
+            this.updateVEdgeMap(addedVEdgeMap, vedgeId, inverseVedgeId, vEdgeInfo,
+              edgeLabel,edgeDirection, size, edgeModel
+            );
+          }
+          else {
+            // update the width of the virtual edges, which is the sum of merged actual edges
+            // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
+            if (addedVEdgeMap[vedgeId]) {
+              addedVEdgeMap[vedgeId].size += size;
+              return;
+            }
+            addedVEdgeMap[vedgeId] = vEdgeInfo;
+          }
         }
       }
     });
 
-    Object.values(addedVEdgeMap).forEach(edgeInfo => {
-      this.processEdgeLabels(edgeInfo);
-      this.setArrowDirections(edgeInfo);
-    });
+    if (opts.inheritLabelWithDir && opts.showCount) {
+      Object.values(addedVEdgeMap).forEach(edgeInfo => {
+        this.processEdgeLabels(edgeInfo);
+        this.setArrowDirections(edgeInfo);
+      });
+    }
 
     this.addItems(
       Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'vedge', model: edgeInfo as EdgeConfig })),
