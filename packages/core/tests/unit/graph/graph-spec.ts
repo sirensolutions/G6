@@ -1771,7 +1771,7 @@ describe('states', () => {
   });
 });
 
-describe.only('Custom label and direction on VEdge', () => {
+describe('Custom label and direction on VEdge', () => {
   let graph: Graph;
   let combo: ICombo;
 
