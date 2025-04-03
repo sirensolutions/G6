@@ -2755,13 +2755,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     return hasStart && hasEnd ? 'both' : hasStart ? 'start' : hasEnd ? 'end' : 'none';
   }
 
-  private processEdgeLabels(edgeInfo) {
-    const totalCount = edgeInfo.count;
-    const { allSameLabel, firstLabel } = edgeInfo;
+  private processEdgeLabels(edgeInfo, opts) {
+    const { showCount, inheritLabel } = opts;
+    const { count, allSameLabel, firstLabel } = edgeInfo;
 
-    edgeInfo.style.label.value = allSameLabel && firstLabel !== ''
-      ? `${firstLabel} (${totalCount})`
-      : `(${totalCount})`;
+    edgeInfo.style.label.value = (inheritLabel && allSameLabel && firstLabel !== '')
+      ? `${firstLabel}${showCount ? ` (${count})` : ''}`
+      : (showCount ? `(${count})` : '');
   }
 
   private setArrowDirections(edgeInfo) {
@@ -2849,12 +2849,16 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   /**
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
+   * @param {object} [opts] - Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=true] - If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=true] - If true, displays the count of edges merged to form a virtual edge.
    */
   public collapseCombo(combo: string | ICombo, stack: boolean = true, opts: {
-    inheritLabelWithDir: boolean,
+    inheritLabel: boolean,
     showCount: boolean
   } = {
-    inheritLabelWithDir: true,
+    inheritLabel: true,
     showCount: true
   }): void {
     if (this.destroyed) return;
@@ -2955,7 +2959,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         const key = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
         const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
-        if (opts.inheritLabelWithDir && opts.showCount) {
+        if (opts.inheritLabel || opts.showCount) {
           this.updateVEdgeMap(addedVEdgeMap, key, inverseKey, vEdgeInfo,
             edgeLabel,edgeDirection, size, edgeModel
           );
@@ -2975,9 +2979,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       }
     });
 
-    if (opts.inheritLabelWithDir && opts.showCount) {
+    if (opts.inheritLabel || opts.showCount) {
       Object.values(addedVEdgeMap).forEach(edgeInfo => {
-        this.processEdgeLabels(edgeInfo);
+        this.processEdgeLabels(edgeInfo, opts);
         this.setArrowDirections(edgeInfo);
       });
     }
@@ -2993,12 +2997,16 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   /**
    * 展开指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
+   * @param {object} [opts] - Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=true] - If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=true] - If true, displays the count of edges merged to form a virtual edge.
    */
   public expandCombo(combo: string | ICombo, stack: boolean = true, opts: {
-    inheritLabelWithDir: boolean,
+    inheritLabel: boolean,
     showCount: boolean
   } = {
-    inheritLabelWithDir: true,
+    inheritLabel: true,
     showCount: true
   }): void {
     if (isString(combo)) {
@@ -3125,7 +3133,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           const vedgeId = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
           const inverseVedgeId = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
-          if (opts.inheritLabelWithDir && opts.showCount) {
+          if (opts.inheritLabel || opts.showCount) {
             this.updateVEdgeMap(addedVEdgeMap, vedgeId, inverseVedgeId, vEdgeInfo,
               edgeLabel,edgeDirection, size, edgeModel
             );
@@ -3143,9 +3151,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
       }
     });
 
-    if (opts.inheritLabelWithDir && opts.showCount) {
+    if (opts.inheritLabel || opts.showCount) {
       Object.values(addedVEdgeMap).forEach(edgeInfo => {
-        this.processEdgeLabels(edgeInfo);
+        this.processEdgeLabels(edgeInfo, opts);
         this.setArrowDirections(edgeInfo);
       });
     }
