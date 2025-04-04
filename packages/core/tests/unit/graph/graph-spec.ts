@@ -1808,7 +1808,7 @@ describe('Custom label and direction on VEdge', () => {
       style: { keyshape: { startArrow: true }}
     });
 
-    graph.collapseCombo(combo);
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
 
     const vEdges = graph.get('vedges');
     expect(vEdges.length).toBe(1);
@@ -1834,7 +1834,7 @@ describe('Custom label and direction on VEdge', () => {
       style: { keyshape: { endArrow: true }}
     });
 
-    graph.collapseCombo(combo);
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
 
     const vEdges = graph.get('vedges');
     expect(vEdges.length).toBe(1);
@@ -1858,7 +1858,7 @@ describe('Custom label and direction on VEdge', () => {
       style: { keyshape: { startArrow: true }}
     });
 
-    graph.collapseCombo(combo);
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
 
     const vEdges = graph.get('vedges');
     expect(vEdges.length).toBe(1);
@@ -1882,7 +1882,7 @@ describe('Custom label and direction on VEdge', () => {
       style: { keyshape: { startArrow: true }}
     });
 
-    graph.collapseCombo(combo);
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
 
     const vEdges = graph.get('vedges');
     expect(vEdges.length).toBe(1);

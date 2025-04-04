@@ -2858,8 +2858,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     inheritLabel: boolean,
     showCount: boolean
   } = {
-    inheritLabel: true,
-    showCount: true
+    inheritLabel: false,
+    showCount: false
   }): void {
     if (this.destroyed) return;
     if (isString(combo)) {
@@ -2930,10 +2930,6 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           return;
         }
         let otherEndModel = otherEnd.getModel();
-        const edgeModel = edge.getModel();
-        const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
-        const { style } = edgeModel;
-        const edgeDirection = this.getEdgeDirection(style);
 
         while (!otherEnd.isVisible()) {
           const { parentId: otherEndPId, comboId: otherEndCId } = otherEndModel;
@@ -2960,11 +2956,14 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
         const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
         if (opts.inheritLabel || opts.showCount) {
+          const edgeModel = edge.getModel();
+          const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+          const { style } = edgeModel;
+          const edgeDirection = this.getEdgeDirection(style);
           this.updateVEdgeMap(addedVEdgeMap, key, inverseKey, vEdgeInfo,
             edgeLabel,edgeDirection, size, edgeModel
           );
-        }
-        else {
+        } else {
           if (addedVEdgeMap[key]) {
             addedVEdgeMap[key].size += size;
             return;
@@ -3006,8 +3005,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     inheritLabel: boolean,
     showCount: boolean
   } = {
-    inheritLabel: true,
-    showCount: true
+    inheritLabel: false,
+    showCount: false
   }): void {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
@@ -3083,10 +3082,6 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           this.removeItem(edge, false);
           return;
         }
-        const edgeModel = edge.getModel();
-        const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
-        const { style } = edgeModel;
-        const edgeDirection = this.getEdgeDirection(style);
 
         let otherEndModel = otherEnd.getModel();
         // find the nearest visible ancestor
@@ -3134,11 +3129,14 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           const inverseVedgeId = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
 
           if (opts.inheritLabel || opts.showCount) {
+            const edgeModel = edge.getModel();
+            const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+            const { style } = edgeModel;
+            const edgeDirection = this.getEdgeDirection(style);
             this.updateVEdgeMap(addedVEdgeMap, vedgeId, inverseVedgeId, vEdgeInfo,
               edgeLabel,edgeDirection, size, edgeModel
             );
-          }
-          else {
+          } else {
             // update the width of the virtual edges, which is the sum of merged actual edges
             // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
             if (addedVEdgeMap[vedgeId]) {
