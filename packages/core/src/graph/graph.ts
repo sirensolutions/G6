@@ -2849,10 +2849,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   /**
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
-   * @param {object} [opts] - Optional parameter for the collapse operation.
-   * @param {boolean} [opts.inheritLabel=true] - If true, the virtual edge inherits the label from connected edges
+   * @param {boolean} [stack] Default is true. If true, the collase operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
    *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
-   * @param {boolean} [opts.showCount=true] - If true, displays the count of edges merged to form a virtual edge.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
   public collapseCombo(combo: string | ICombo, stack: boolean = true, opts: {
     inheritLabel: boolean,
@@ -2996,10 +2997,11 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   /**
    * 展开指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
-   * @param {object} [opts] - Optional parameter for the collapse operation.
-   * @param {boolean} [opts.inheritLabel=true] - If true, the virtual edge inherits the label from connected edges
+   * @param {boolean} [stack] Default is true. If true, the expand operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
    *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
-   * @param {boolean} [opts.showCount=true] - If true, displays the count of edges merged to form a virtual edge.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
   public expandCombo(combo: string | ICombo, stack: boolean = true, opts: {
     inheritLabel: boolean,
