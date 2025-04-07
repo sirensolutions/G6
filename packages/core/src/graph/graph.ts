@@ -3169,8 +3169,8 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     inheritLabel: boolean,
     showCount: boolean
   } = {
-    inheritLabel: true,
-    showCount: true
+    inheritLabel: false,
+    showCount: false
   }) {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
