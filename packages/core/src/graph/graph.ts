@@ -3165,7 +3165,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     this.emit('aftercollapseexpandcombo', { action: 'expand', item: combo });
   }
 
-  public collapseExpandCombo(combo: string | ICombo, stack: boolean = true) {
+  public collapseExpandCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabel: boolean,
+    showCount: boolean
+  } = {
+    inheritLabel: true,
+    showCount: true
+  }) {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
     }
@@ -3187,9 +3193,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const collapsed = comboModel.collapsed;
     // 该群组已经处于收起状态，需要展开
     if (collapsed) {
-      this.expandCombo(combo, stack);
+      this.expandCombo(combo, stack, opts);
     } else {
-      this.collapseCombo(combo, stack);
+      this.collapseCombo(combo, stack, opts);
     }
     this.updateCombo(combo);
   }
