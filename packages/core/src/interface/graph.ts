@@ -527,20 +527,30 @@ export interface IAbstractGraph extends EventEmitter {
   /**
    * 收起指定的 Combo
    * @param comboId combo ID 或 combo 实例
+   * @param {boolean} [stack] Default is true. If true, the collase operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
-  collapseCombo: (combo: string | ICombo, stack?: boolean) => void;
+  collapseCombo: (combo: string | ICombo, stack?: boolean, opts?: {inheritLabel: boolean, showCount: boolean}) => void;
 
   /**
    * 展开指定的 Combo
    * @param combo combo ID 或 combo 实例
+   * @param {boolean} [stack] Default is true. If true, the expand operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
-  expandCombo: (combo: string | ICombo, stack?: boolean) => void;
+  expandCombo: (combo: string | ICombo, stack?: boolean, opts?: { inheritLabel: boolean, showCount: boolean }) => void;
 
   /**
    * 展开或收缩指定的 Combo
    * @param comboId combo ID 或 combo 实例
    */
-  collapseExpandCombo: (combo: string | ICombo, stack?: boolean) => void;
+  collapseExpandCombo: (combo: string | ICombo, stack?: boolean, opts?: { inheritLabel: boolean, showCount: boolean }) => void;
 
   /**
    * 根据节点的 bbox 更新所有 combos 的绘制，包括 combos 的位置和范围
