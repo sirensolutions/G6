@@ -1770,3 +1770,125 @@ describe('states', () => {
     expect(savedGraph.combos[1].states).toEqual({});
   });
 });
+
+describe('Custom label and direction on VEdge', () => {
+  let graph: Graph;
+  let combo: ICombo;
+
+  beforeEach(() => {
+    graph = new Graph({
+      container: div,
+      height: 500,
+      width: 500,
+    });
+
+    const comboId = 'testCombo';
+    graph.addItem('combo', { id: comboId });
+    combo = graph.findById(comboId) as ICombo;
+    graph.addItem('node', { id: 'node1', comboId, x: 50, y: 50 });
+    graph.addItem('node', { id: 'node2', comboId, x: 150, y: 150 });
+    graph.addItem('node', { id: 'externalNode', x: 250, y: 50 });
+  });
+
+  afterEach(() => {
+    if (!graph.destroyed) graph.destroy();
+  });
+
+  it('should display combined label with count and direction for edges having identical label and direction', () => {
+    graph.addItem('edge', {
+      source: 'node1',
+      target: 'externalNode',
+      label: 'A',
+      style: { keyshape: { startArrow: true }}
+    });
+    graph.addItem('edge', {
+      source: 'node2',
+      target: 'externalNode',
+      label: 'A',
+      style: { keyshape: { startArrow: true }}
+    });
+
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
+
+    const vEdges = graph.get('vedges');
+    expect(vEdges.length).toBe(1);
+    const vEdge = vEdges[0].getModel();
+
+    expect(vEdge.style.label.value).toBe('A (2)');
+
+    expect(vEdge.startArrow).toBe(true);
+    expect(vEdge.endArrow).toBeUndefined;
+  });
+
+  it('should display only count and direction on VEdge when combining edges having mixed labels and identical direction', () => {
+    graph.addItem('edge', {
+      source: 'node1',
+      target: 'externalNode',
+      label: 'A',
+      style: { keyshape: { endArrow: true }}
+    });
+    graph.addItem('edge', {
+      source: 'node2',
+      target: 'externalNode',
+      label: 'B',
+      style: { keyshape: { endArrow: true }}
+    });
+
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
+
+    const vEdges = graph.get('vedges');
+    expect(vEdges.length).toBe(1);
+    const vEdge = vEdges[0].getModel();
+    expect(vEdge.style.label.value).toBe('(2)');
+    expect(vEdge.endArrow).toBe(true);
+    expect(vEdge.startArrow).toBeUndefined;
+  });
+
+  it('should display combined label with count and no direction for edges having identical label but mix in direction', () => {
+    graph.addItem('edge', {
+      source: 'node1',
+      target: 'externalNode',
+      label: 'A',
+      style: { keyshape: { endArrow: true }}
+    });
+    graph.addItem('edge', {
+      source: 'externalNode',
+      target: 'node2',
+      label: 'A',
+      style: { keyshape: { startArrow: true }}
+    });
+
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
+
+    const vEdges = graph.get('vedges');
+    expect(vEdges.length).toBe(1);
+    const vEdge = vEdges[0].getModel();
+    expect(vEdge.style.label.value).toBe('A (2)');
+    expect(vEdge.startArrow).toBeUndefined;
+    expect(vEdge.endArrow).toBeUndefined;
+  });
+
+  it('should display only count and no direction for edges having mix label and mix direction', () => {
+    graph.addItem('edge', {
+      source: 'node1',
+      target: 'externalNode',
+      label: 'A',
+    style: { keyshape: { endArrow: true }}
+    });
+    graph.addItem('edge', {
+      source: 'externalNode',
+      target: 'node2',
+      label: 'B',
+      style: { keyshape: { startArrow: true }}
+    });
+
+    graph.collapseCombo(combo, undefined, {inheritLabel:true, showCount:true},);
+
+    const vEdges = graph.get('vedges');
+    expect(vEdges.length).toBe(1);
+    const vEdge = vEdges[0].getModel();
+    expect(vEdge.style.label.value).toBe('(2)');
+    expect(vEdge.startArrow).toBeUndefined;
+    expect(vEdge.endArrow).toBeUndefined;
+  });
+});
