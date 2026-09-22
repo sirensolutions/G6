@@ -2747,11 +2747,121 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     }
   }
 
+  private getEdgeDirection(style): 'start' | 'end' | 'both' | 'none' {
+    const startArrowPath = style?.keyshape?.startArrow?.path;
+    const endArrowPath = style?.keyshape?.endArrow?.path;
+    const hasStart = !!startArrowPath && startArrowPath !== '';
+    const hasEnd = !!endArrowPath && endArrowPath !== '';
+    return hasStart && hasEnd ? 'both' : hasStart ? 'start' : hasEnd ? 'end' : 'none';
+  }
+
+  private processEdgeLabels(edgeInfo, opts) {
+    const { showCount, inheritLabel } = opts;
+    const { count, allSameLabel, firstLabel } = edgeInfo;
+
+    edgeInfo.style.label.value = (inheritLabel && allSameLabel && firstLabel !== '')
+      ? `${firstLabel}${showCount ? ` (${count})` : ''}`
+      : (showCount ? `(${count})` : '');
+  }
+
+  private setArrowDirections(edgeInfo) {
+    if (!edgeInfo.consistentDirection) {
+      edgeInfo.style.keyshape.startArrow = null;
+      edgeInfo.style.keyshape.endArrow = null;
+    } else {
+      const { direction } = edgeInfo;
+      edgeInfo.style.keyshape.startArrow = (direction === 'start' || direction === 'both')
+        ? edgeInfo.startArrow
+        : null;
+      edgeInfo.style.keyshape.endArrow = (direction === 'end' || direction === 'both')
+        ? edgeInfo.endArrow
+        : null;
+    }
+  }
+
+  private updateVEdgeMap( addedVEdgeMap, key, inverseKey, vEdgeInfo,
+    edgeLabel, edgeDirection, size, edgeModel
+  ) {
+    let currentKey = key;
+    let adjustedDirection = edgeDirection;
+
+    if (!addedVEdgeMap[key] && addedVEdgeMap[inverseKey]) {
+      currentKey = inverseKey;
+      adjustedDirection = edgeDirection === 'start' ? 'end' :
+        edgeDirection === 'end' ? 'start' : edgeDirection;
+    }
+
+    const isInverse = currentKey === inverseKey;
+    const startArrow = isInverse ? edgeModel.style?.keyshape?.endArrow : edgeModel.style?.keyshape?.startArrow;
+    const endArrow = isInverse ? edgeModel.style?.keyshape?.startArrow : edgeModel.style?.keyshape?.endArrow;
+
+    const _processLabel = (existing, label) => {
+      if (existing.firstLabel === undefined) {
+        existing.firstLabel = label;
+        existing.allSameLabel = true;
+      } else if (existing.allSameLabel && existing.firstLabel !== label) {
+        existing.allSameLabel = false;
+      }
+    };
+
+    if (addedVEdgeMap[currentKey]) {
+      const existing = addedVEdgeMap[currentKey];
+      // update the width of the virtual edges, which is the sum of merged actual edges
+      // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
+      existing.size += size;
+      existing.count += 1;
+      _processLabel(existing, edgeLabel);
+
+      if (existing.consistentDirection && existing.direction !== adjustedDirection) {
+        existing.consistentDirection = false;
+      }
+    } else if (addedVEdgeMap[inverseKey]) {
+      const existing = addedVEdgeMap[inverseKey];
+      // update the width of the virtual edges, which is the sum of merged actual edges
+      // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
+      existing.size += size;
+      existing.count += 1;
+      _processLabel(existing, edgeLabel);
+
+      const adjustedInverseDirection = adjustedDirection === 'start' ? 'end' : adjustedDirection === 'end' ? 'start' : adjustedDirection;
+      if (existing.consistentDirection && existing.direction !== adjustedInverseDirection) {
+        existing.consistentDirection = false;
+      }
+    } else {
+      addedVEdgeMap[currentKey] = {
+        ...vEdgeInfo,
+        size,
+        count: 1,
+        firstLabel: edgeLabel,
+        allSameLabel: true,
+        direction: adjustedDirection,
+        consistentDirection: true,
+        startArrow,
+        endArrow,
+        style: {
+          label: { value: '' },
+          keyshape: { startArrow, endArrow }
+        }
+      };
+    }
+  }
+
   /**
    * 收起指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
+   * @param {boolean} [stack] Default is true. If true, the collase operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
-  public collapseCombo(combo: string | ICombo, stack: boolean = true): void {
+  public collapseCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabel: boolean,
+    showCount: boolean
+  } = {
+    inheritLabel: false,
+    showCount: false
+  }): void {
     if (this.destroyed) return;
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
@@ -2821,6 +2931,7 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           return;
         }
         let otherEndModel = otherEnd.getModel();
+
         while (!otherEnd.isVisible()) {
           const { parentId: otherEndPId, comboId: otherEndCId } = otherEndModel;
           const otherEndParentId = otherEndPId || otherEndCId;
@@ -2843,20 +2954,37 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
           isVEdge: true,
         };
         const key = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
-        if (addedVEdgeMap[key]) {
-          addedVEdgeMap[key].size += size;
-          return;
+        const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
+
+        if (opts.inheritLabel || opts.showCount) {
+          const edgeModel = edge.getModel();
+          const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+          const { style } = edgeModel;
+          const edgeDirection = this.getEdgeDirection(style);
+          this.updateVEdgeMap(addedVEdgeMap, key, inverseKey, vEdgeInfo,
+            edgeLabel,edgeDirection, size, edgeModel
+          );
         } else {
-          const inverseKey = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
-          if (addedVEdgeMap[inverseKey]) {
-            addedVEdgeMap[inverseKey].size += size;
+          if (addedVEdgeMap[key]) {
+            addedVEdgeMap[key].size += size;
             return;
+          } else {
+            if (addedVEdgeMap[inverseKey]) {
+              addedVEdgeMap[inverseKey].size += size;
+              return;
+            }
           }
+          addedVEdgeMap[key] = vEdgeInfo;
         }
-        addedVEdgeMap[key] = vEdgeInfo;
       }
     });
 
+    if (opts.inheritLabel || opts.showCount) {
+      Object.values(addedVEdgeMap).forEach(edgeInfo => {
+        this.processEdgeLabels(edgeInfo, opts);
+        this.setArrowDirections(edgeInfo);
+      });
+    }
     // update the width of the virtual edges, which is the sum of merged actual edges
     // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
     this.addItems(
@@ -2869,8 +2997,19 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
   /**
    * 展开指定的 combo
    * @param {string | ICombo} combo combo ID 或 combo item
+   * @param {boolean} [stack] Default is true. If true, the expand operation is recorded in the stack.
+   * @param {object} [opts] Optional parameter for the collapse operation.
+   * @param {boolean} [opts.inheritLabel=false] Default is false. If true, the virtual edge inherits the label from connected edges
+   *   only if all connected edges have identical labels. Otherwise, the vedge will have a blank label.
+   * @param {boolean} [opts.showCount=false] Default is false. If true, displays the count of edges merged to form a virtual edge.
    */
-  public expandCombo(combo: string | ICombo, stack: boolean = true): void {
+  public expandCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabel: boolean,
+    showCount: boolean
+  } = {
+    inheritLabel: false,
+    showCount: false
+  }): void {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
     }
@@ -2989,16 +3128,36 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
             size
           }
           const vedgeId = `${vEdgeInfo.source}-${vEdgeInfo.target}`;
-          // update the width of the virtual edges, which is the sum of merged actual edges
-          // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
-          if (addedVEdgeMap[vedgeId]) {
-            addedVEdgeMap[vedgeId].size += size;
-            return;
+          const inverseVedgeId = `${vEdgeInfo.target}-${vEdgeInfo.source}`;
+
+          if (opts.inheritLabel || opts.showCount) {
+            const edgeModel = edge.getModel();
+            const edgeLabel = edgeModel.label || edgeModel.style?.label?.value || '';
+            const { style } = edgeModel;
+            const edgeDirection = this.getEdgeDirection(style);
+            this.updateVEdgeMap(addedVEdgeMap, vedgeId, inverseVedgeId, vEdgeInfo,
+              edgeLabel,edgeDirection, size, edgeModel
+            );
+          } else {
+            // update the width of the virtual edges, which is the sum of merged actual edges
+            // be attention that the actual edges with same endpoints but different directions will be represented by two different virtual edges
+            if (addedVEdgeMap[vedgeId]) {
+              addedVEdgeMap[vedgeId].size += size;
+              return;
+            }
+            addedVEdgeMap[vedgeId] = vEdgeInfo;
           }
-          addedVEdgeMap[vedgeId] = vEdgeInfo;
         }
       }
     });
+
+    if (opts.inheritLabel || opts.showCount) {
+      Object.values(addedVEdgeMap).forEach(edgeInfo => {
+        this.processEdgeLabels(edgeInfo, opts);
+        this.setArrowDirections(edgeInfo);
+      });
+    }
+
     this.addItems(
       Object.values(addedVEdgeMap).map(edgeInfo => ({ type: 'vedge', model: edgeInfo as EdgeConfig })),
       false
@@ -3006,7 +3165,13 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     this.emit('aftercollapseexpandcombo', { action: 'expand', item: combo });
   }
 
-  public collapseExpandCombo(combo: string | ICombo, stack: boolean = true) {
+  public collapseExpandCombo(combo: string | ICombo, stack: boolean = true, opts: {
+    inheritLabel: boolean,
+    showCount: boolean
+  } = {
+    inheritLabel: false,
+    showCount: false
+  }) {
     if (isString(combo)) {
       combo = this.findById(combo) as ICombo;
     }
@@ -3028,9 +3193,9 @@ export default abstract class AbstractGraph extends EventEmitter implements IAbs
     const collapsed = comboModel.collapsed;
     // 该群组已经处于收起状态，需要展开
     if (collapsed) {
-      this.expandCombo(combo, stack);
+      this.expandCombo(combo, stack, opts);
     } else {
-      this.collapseCombo(combo, stack);
+      this.collapseCombo(combo, stack, opts);
     }
     this.updateCombo(combo);
   }

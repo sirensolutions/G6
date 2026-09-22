@@ -99,6 +99,8 @@ Collapse a Combo.
 | Name  | Type            | Required | Description                                           |
 | ----- | --------------- | -------- | ----------------------------------------------------- |
 | combo | string / ICombo | true     | The ID of the combo or the combo item to be collapsed |
+| stack | boolean         | false    | Whether to push this operation in the undo & redo stack.       |
+| opts  | object          | false    | Customize VEdge: `{ inheritLabel: boolean, showCount: boolean }`. If `inheritLabel` is `true` and all edges forming a VEdge have identical labels/directions, the same label/direction is inherited; otherwise, a blank label and no direction appear. If `showCount` is `true`, displays the count of edges merged into the VEdge as a label. |
 
 **Usage**
 
@@ -115,6 +117,8 @@ Expand a Combo.
 | Name  | Type            | Required | Description                                          |
 | ----- | --------------- | -------- | ---------------------------------------------------- |
 | combo | string / ICombo | true     | The ID of the combo or the combo item to be expanded |
+| stack | boolean         | false    | Whether to push this operation in the undo & redo stack.       |
+| opts  | object          | false    | Customize VEdge: `{ inheritLabel: boolean, showCount: boolean }`. If `inheritLabel` is `true` and all edges forming a VEdge have identical labels/directions, the same label/direction is inherited; otherwise, a blank label and no direction appear. If `showCount` is `true`, displays the count of edges merged into the VEdge as a label. |
 
 **Usage**
 
@@ -131,6 +135,8 @@ Expand the `combo` if it is collapsed. Collapse the `combo` if it is expanded.
 | Name | Type | Required | Description |
 | --- | --- | --- | --- |
 | combo | string / ICombo | true | The ID of the combo or the combo item to be collapsed or expanded |
+| stack | boolean         | false    | Whether to push this operation in the undo & redo stack.       |
+| opts  | object          | false    | Customize VEdge: `{ inheritLabel: boolean, showCount: boolean }`. If `inheritLabel` is `true` and all edges forming a VEdge have identical labels/directions, the same label/direction is inherited; otherwise, a blank label and no direction appear. If `showCount` is `true`, displays the count of edges merged into the VEdge as a label. |
 
 **Usage**
 
